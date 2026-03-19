@@ -41,27 +41,6 @@
       pointer-events: none;
     }
 
-    .floating-back {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 5;
-      height: 44px;
-      padding: 0 18px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-decoration: none;
-      color: var(--text);
-      background: rgba(7, 18, 38, 0.92);
-      border: 1px solid rgba(103, 232, 249, 0.24);
-      box-shadow: 0 16px 36px rgba(2, 6, 23, 0.35);
-      backdrop-filter: blur(14px);
-      font-size: 14px;
-    }
-
     .screen {
       position: relative;
       z-index: 1;
@@ -83,7 +62,19 @@
     .side {
       display: grid;
       gap: 18px;
-      grid-auto-rows: minmax(0, auto);
+      grid-auto-rows: max-content;
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .side::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .side::-webkit-scrollbar-thumb {
+      background: rgba(103, 232, 249, 0.18);
+      border-radius: 999px;
     }
 
     .card {
@@ -158,6 +149,19 @@
       background: rgba(52, 211, 153, 0.10);
     }
 
+    .btn-back {
+      gap: 10px;
+      color: #e8f4ff;
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.92), rgba(12, 32, 62, 0.92));
+      border-color: rgba(103, 232, 249, 0.22);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 28px rgba(2, 6, 23, 0.28);
+    }
+
+    .btn-back:hover {
+      border-color: rgba(103, 232, 249, 0.38);
+      transform: translateY(-1px);
+    }
+
     .center {
       display: grid;
       grid-template-rows: auto 1fr;
@@ -169,6 +173,7 @@
       min-height: 0;
       display: grid;
       grid-template-rows: auto 1fr auto;
+      overflow: hidden;
     }
 
     .map-head {
@@ -194,6 +199,7 @@
       min-height: 0;
       height: 100%;
       margin-top: 6px;
+      align-self: center;
     }
 
     .metric-grid {
@@ -367,7 +373,6 @@
 </head>
 <body>
   <div class="grid-bg"></div>
-  <a class="floating-back" href="./admin">← 返回后台</a>
   <div class="screen">
     <aside class="side">
       <section class="card">
@@ -405,7 +410,7 @@
         </div>
         <div class="top-actions">
           <div class="chip" id="updatedAt">等待同步</div>
-          <a class="btn" href="./admin">返回后台</a>
+          <a class="btn btn-back" href="./admin">← 返回后台</a>
         </div>
       </div>
 
@@ -659,9 +664,9 @@
         geo: {
           map: "china-bigscreen",
           roam: true,
-          zoom: 1.18,
-          layoutCenter: ["50%", "55%"],
-          layoutSize: "108%",
+          zoom: 1.04,
+          layoutCenter: ["50%", "50%"],
+          layoutSize: "96%",
           itemStyle: {
             areaColor: "#173b73",
             borderColor: "#7dd3fc",
@@ -744,9 +749,9 @@
         geo3D: {
           map: "china-bigscreen",
           roam: true,
-          boxWidth: 108,
-          boxDepth: 80,
-          regionHeight: 2.2,
+          boxWidth: 96,
+          boxDepth: 70,
+          regionHeight: 2,
           shading: "lambert",
           light: {
             main: { intensity: 1.1, alpha: 35, beta: 10 },
@@ -767,9 +772,9 @@
             }
           },
           viewControl: {
-            distance: 108,
-            alpha: 44,
-            beta: -2,
+            distance: 118,
+            alpha: 38,
+            beta: 0,
             minDistance: 70,
             maxDistance: 140
           },

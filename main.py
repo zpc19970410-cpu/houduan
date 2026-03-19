@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory, session, redirec
 from pathlib import Path
 from functools import wraps
 from collections import defaultdict
+from datetime import datetime
 import os
 import secrets
 import time
@@ -24,6 +25,7 @@ DATA_DIR = BASE_DIR / "data"
 RESUME_DIR = BASE_DIR / "resumes"
 USERS_FILE = DATA_DIR / "users.json"
 CONTACTS_FILE = DATA_DIR / "contacts.json"
+VISITS_FILE = DATA_DIR / "visits.json"
 LOGIN_ATTEMPTS = defaultdict(list)
 CAPTCHA_ATTEMPTS = defaultdict(list)
 LOGIN_WINDOW_SECONDS = 300
@@ -33,6 +35,7 @@ CAPTCHA_MAX_ATTEMPTS = 16
 RESUME_MATCH_ATTEMPTS = defaultdict(list)
 RESUME_MATCH_WINDOW_SECONDS = 180
 RESUME_MATCH_MAX_ATTEMPTS = 12
+MAX_VISIT_RECORDS = 500
 
 RESUME_PROFILES = {
     "resume-energy": {
@@ -85,6 +88,9 @@ def ensure_data_files():
     if not CONTACTS_FILE.exists():
         CONTACTS_FILE.write_text("[]", encoding="utf-8")
 
+    if not VISITS_FILE.exists():
+        VISITS_FILE.write_text("[]", encoding="utf-8")
+
     RESUME_DIR.mkdir(exist_ok=True)
 
 
@@ -128,6 +134,97 @@ def current_user():
 
 def normalize_text(text):
     return " ".join(str(text).lower().split())
+
+
+def mask_ip(ip_address):
+    if ":" in ip_address:
+        parts = ip_address.split(":")
+        if len(parts) > 2:
+            return ":".join(parts[:3]) + ":*"
+        return ip_address
+    parts = ip_address.split(".")
+    if len(parts) == 4:
+        return ".".join(parts[:3]) + ".*"
+    return ip_address
+
+
+def parse_device_label(user_agent):
+    ua = (user_agent or "").lower()
+    if not ua:
+        return "未知设备"
+    if "iphone" in ua or "ipad" in ua or "android" in ua or "mobile" in ua:
+        return "移动端"
+    if "macintosh" in ua or "windows" in ua or "linux" in ua:
+        return "桌面端"
+    return "其他设备"
+
+
+def parse_browser_label(user_agent):
+    ua = (user_agent or "").lower()
+    if "edg" in ua:
+        return "Edge"
+    if "chrome" in ua and "edg" not in ua:
+        return "Chrome"
+    if "safari" in ua and "chrome" not in ua:
+        return "Safari"
+    if "firefox" in ua:
+        return "Firefox"
+    if "micromessenger" in ua:
+        return "微信"
+    return "其他浏览器"
+
+
+def record_visit(payload):
+    visits = load_json(VISITS_FILE)
+    now = datetime.now()
+    user_agent = request.headers.get("User-Agent", "")
+    visit_item = {
+        "id": secrets.token_hex(8),
+        "path": str(payload.get("path") or request.path or "/").strip() or "/",
+        "title": str(payload.get("title") or "").strip(),
+        "referrer": str(payload.get("referrer") or request.referrer or "").strip(),
+        "ip": mask_ip(client_ip()),
+        "device": parse_device_label(user_agent),
+        "browser": parse_browser_label(user_agent),
+        "userAgent": user_agent[:220],
+        "visitedAt": now.strftime("%Y-%m-%d %H:%M:%S"),
+        "visitedDate": now.strftime("%Y-%m-%d"),
+        "visitorKey": f"{mask_ip(client_ip())}|{parse_browser_label(user_agent)}|{parse_device_label(user_agent)}"
+    }
+    visits.append(visit_item)
+    if len(visits) > MAX_VISIT_RECORDS:
+        visits = visits[-MAX_VISIT_RECORDS:]
+    save_json(VISITS_FILE, visits)
+
+
+def build_visit_summary():
+    visits = load_json(VISITS_FILE)
+    visits = sorted(visits, key=lambda item: item.get("visitedAt", ""), reverse=True)
+    today = datetime.now().strftime("%Y-%m-%d")
+    today_visits = [item for item in visits if item.get("visitedDate") == today]
+    unique_visitors = len({item.get("visitorKey", item.get("ip", "")) for item in visits})
+    mobile_visits = len([item for item in visits if item.get("device") == "移动端"])
+
+    return {
+        "summary": {
+            "totalVisits": len(visits),
+            "todayVisits": len(today_visits),
+            "uniqueVisitors": unique_visitors,
+            "mobileVisits": mobile_visits
+        },
+        "recent": [
+            {
+                "visitedAt": item.get("visitedAt", ""),
+                "path": item.get("path", "/"),
+                "title": item.get("title", "") or "首页访问",
+                "device": item.get("device", "未知设备"),
+                "browser": item.get("browser", "其他浏览器"),
+                "ip": item.get("ip", ""),
+                "referrer": item.get("referrer", "") or "直接访问"
+            }
+            for item in visits[:12]
+        ]
+    }
 
 
 def match_resume_profile(jd_text):
@@ -404,6 +501,22 @@ def contact():
     })
 
 
+@app.route("/api/visit", methods=["POST"])
+def track_visit():
+    data = request.get_json(silent=True) or {}
+    path = str(data.get("path", "")).strip()
+    if not path:
+        return jsonify({
+            "success": False,
+            "message": "缺少访问路径"
+        }), 400
+
+    record_visit(data)
+    return jsonify({
+        "success": True
+    })
+
+
 @app.route("/api/resume/match", methods=["POST"])
 def match_resume():
     if is_rate_limited(RESUME_MATCH_ATTEMPTS, client_ip(), RESUME_MATCH_WINDOW_SECONDS, RESUME_MATCH_MAX_ATTEMPTS):
@@ -477,6 +590,16 @@ def get_contacts():
     return jsonify({
         "success": True,
         "data": contacts
+    })
+
+
+@app.route("/api/visits", methods=["GET"])
+@login_required
+def get_visits():
+    stats = build_visit_summary()
+    return jsonify({
+        "success": True,
+        "data": stats
     })
 
 

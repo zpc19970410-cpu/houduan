@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>三维可视化大屏｜赵培成后台系统</title>
+  <style>
+    :root {
+      --bg: #030712;
+      --panel: rgba(7, 18, 38, 0.86);
+      --panel-strong: rgba(10, 24, 48, 0.92);
+      --line: rgba(96, 165, 250, 0.18);
+      --text: #eef6ff;
+      --muted: #8ea3bf;
+      --cyan: #67e8f9;
+      --blue: #60a5fa;
+      --emerald: #34d399;
+      --shadow: 0 24px 64px rgba(2, 6, 23, 0.42);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; font-family: "Avenir Next", "SF Pro Display", "PingFang SC", sans-serif; }
+    body {
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 18%, rgba(52, 211, 153, 0.10), transparent 24%),
+        radial-gradient(circle at 82% 12%, rgba(96, 165, 250, 0.16), transparent 24%),
+        radial-gradient(circle at 50% 92%, rgba(103, 232, 249, 0.10), transparent 20%),
+        #030712;
+      overflow: hidden;
+    }
+
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(103, 232, 249, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(103, 232, 249, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 360px 1fr 360px;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+    }
+
+    .side {
+      display: grid;
+      gap: 18px;
+      grid-auto-rows: minmax(0, auto);
+    }
+
+    .card {
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(9, 21, 42, 0.94), rgba(6, 17, 35, 0.88));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .card small, .topbar small {
+      color: var(--muted);
+      letter-spacing: 0.18em;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .card h3 {
+      margin: 10px 0 0;
+      font-size: 22px;
+    }
+
+    .topbar {
+      height: 90px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .title h1 {
+      margin: 8px 0 0;
+      font-size: 34px;
+      letter-spacing: 0.04em;
+    }
+
+    .title p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chip, .btn {
+      height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .chip {
+      color: #dafeff;
+      border-color: rgba(52, 211, 153, 0.26);
+      background: rgba(52, 211, 153, 0.10);
+    }
+
+    .center {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-height: 0;
+    }
+
+    .center-panel {
+      padding: 18px;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .map-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .map-head h2 {
+      margin: 8px 0 0;
+      font-size: 28px;
+    }
+
+    .map-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    #chinaMap {
+      min-height: 0;
+      height: 100%;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .metric {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .chart {
+      height: 220px;
+      margin-top: 14px;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .list-item {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(148, 163, 184, 0.10);
+    }
+
+    .list-item strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .list-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .status-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(148, 163, 184, 0.10);
+    }
+
+    .status-row strong { font-size: 15px; }
+    .status-row span { color: var(--muted); font-size: 13px; }
+    .status-value { color: var(--cyan); font-size: 18px; font-weight: 700; }
+
+    .footer-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    @media (max-width: 1440px) {
+      .screen {
+        grid-template-columns: 300px 1fr 300px;
+      }
+    }
+
+    @media (max-width: 1180px) {
+      body { overflow: auto; }
+      .screen {
+        height: auto;
+        grid-template-columns: 1fr;
+      }
+      .center { min-height: 720px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="screen">
+    <aside class="side">
+      <section class="card">
+        <small>OpenClaw</small>
+        <h3>安装态势</h3>
+        <div class="metric-grid">
+          <div class="metric">
+            <small>累计安装</small>
+            <strong id="openClawInstallations">0</strong>
+            <span>当前已纳管的安装总量</span>
+          </div>
+          <div class="metric">
+            <small>在线节点</small>
+            <strong id="openClawOnlineNodes">0</strong>
+            <span>当前在线且同步成功的节点</span>
+          </div>
+        </div>
+        <div class="chart" id="installTrendChart"></div>
+      </section>
+
+      <section class="card">
+        <small>区域热度</small>
+        <h3>安装热点省份</h3>
+        <div class="list" id="regionList"></div>
+      </section>
+    </aside>
+
+    <main class="center">
+      <div class="topbar panel">
+        <div class="title">
+          <small>Three-Dimensional Big Screen</small>
+          <h1>OpenClaw 与 AI 运行可视化大屏</h1>
+          <p>中间展示中国三维地图，两侧展示安装态势、AI 审核与站点实时数据。</p>
+        </div>
+        <div class="top-actions">
+          <div class="chip" id="updatedAt">等待同步</div>
+          <a class="btn" href="./admin">返回后台</a>
+        </div>
+      </div>
+
+      <section class="center-panel panel">
+        <div class="map-head">
+          <div>
+            <small>National Distribution</small>
+            <h2>中国安装分布地图</h2>
+            <p>实时高亮各省安装强度，并叠加运行热点与 AI 业务热区。</p>
+          </div>
+          <div class="chip">实时轮询中</div>
+        </div>
+        <div id="chinaMap"></div>
+        <div class="footer-note">数据源：后台实时快照、站点访问、线索留资、AI 运行指标</div>
+      </section>
+    </main>
+
+    <aside class="side">
+      <section class="card">
+        <small>AI Runtime</small>
+        <h3>AI 实时指标</h3>
+        <div class="metric-grid">
+          <div class="metric">
+            <small>今日任务量</small>
+            <strong id="aiDailyTasks">0</strong>
+            <span>审核、提取、匹配等累计任务</span>
+          </div>
+          <div class="metric">
+            <small>审核通过率</small>
+            <strong id="aiPassRate">0%</strong>
+            <span>当前模型线上通过率</span>
+          </div>
+          <div class="metric">
+            <small>提取准确率</small>
+            <strong id="extractionRate">0%</strong>
+            <span>正文与附件字段抽取效果</span>
+          </div>
+          <div class="metric">
+            <small>平均延迟</small>
+            <strong id="avgLatency">0s</strong>
+            <span>模型服务近实时响应时间</span>
+          </div>
+        </div>
+        <div class="chart" id="aiTrendChart"></div>
+      </section>
+
+      <section class="card">
+        <small>模块负载</small>
+        <h3>AI 能力分布</h3>
+        <div class="chart" id="moduleChart"></div>
+        <div class="status-list" id="statusList"></div>
+      </section>
+    </aside>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts-gl@2/dist/echarts-gl.min.js"></script>
+  <script>
+    const API_BASE_URL = window.location.protocol === "file:" ? "http://127.0.0.1:5000" : "";
+    const PAGE_BASE_URL = window.location.protocol === "file:" ? "http://127.0.0.1:5000" : window.location.origin;
+    const mapChart = echarts.init(document.getElementById("chinaMap"));
+    const installTrendChart = echarts.init(document.getElementById("installTrendChart"));
+    const aiTrendChart = echarts.init(document.getElementById("aiTrendChart"));
+    const moduleChart = echarts.init(document.getElementById("moduleChart"));
+    let chinaMapReady = false;
+
+    async function ensureChinaMap() {
+      if (chinaMapReady) return;
+      const response = await fetch("https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json");
+      const geoJson = await response.json();
+      echarts.registerMap("china-bigscreen", geoJson);
+      chinaMapReady = true;
+    }
+
+    function renderRegionList(items) {
+      const regionList = document.getElementById("regionList");
+      regionList.innerHTML = items
+        .slice()
+        .sort((a, b) => b.value - a.value)
+        .map((item, index) => `
+          <div class="list-item">
+            <strong>${String(index + 1).padStart(2, "0")} · ${item.name}</strong>
+            <p>当前安装热度 ${item.value}，热点坐标 ${item.coord[0].toFixed(2)}, ${item.coord[1].toFixed(2)}</p>
+          </div>
+        `).join("");
+    }
+
+    function renderStatusList(overview, alerts) {
+      document.getElementById("statusList").innerHTML = `
+        <div class="status-row">
+          <div>
+            <strong>网站访问</strong>
+            <span>来自前台页面的实时访问</span>
+          </div>
+          <div class="status-value">${overview.websiteVisits}</div>
+        </div>
+        <div class="status-row">
+          <div>
+            <strong>HR 线索</strong>
+            <span>联系表单留资总数</span>
+          </div>
+          <div class="status-value">${overview.hrLeads}</div>
+        </div>
+        ${alerts.slice(0, 2).map((text) => `
+          <div class="status-row">
+            <div>
+              <strong>实时播报</strong>
+              <span>${text}</span>
+            </div>
+            <div class="status-value">LIVE</div>
+          </div>
+        `).join("")}
+      `;
+    }
+
+    function renderInstallTrend(series) {
+      installTrendChart.setOption({
+        grid: { left: 18, right: 18, top: 26, bottom: 20 },
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          axisLine: { lineStyle: { color: "rgba(148,163,184,0.2)" } },
+          axisLabel: { color: "#8ea3bf" },
+          data: ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00"]
+        },
+        yAxis: {
+          type: "value",
+          splitLine: { lineStyle: { color: "rgba(148,163,184,0.08)" } },
+          axisLabel: { color: "#8ea3bf" }
+        },
+        series: [{
+          data: series,
+          type: "line",
+          smooth: true,
+          symbol: "circle",
+          symbolSize: 8,
+          lineStyle: { width: 3, color: "#67e8f9" },
+          itemStyle: { color: "#67e8f9" },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: "rgba(103,232,249,0.32)" },
+              { offset: 1, color: "rgba(103,232,249,0.02)" }
+            ])
+          }
+        }]
+      });
+    }
+
+    function renderAiTrend(series) {
+      aiTrendChart.setOption({
+        grid: { left: 18, right: 18, top: 26, bottom: 20 },
+        xAxis: {
+          type: "category",
+          axisLine: { lineStyle: { color: "rgba(148,163,184,0.2)" } },
+          axisLabel: { color: "#8ea3bf" },
+          data: ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00"]
+        },
+        yAxis: {
+          type: "value",
+          splitLine: { lineStyle: { color: "rgba(148,163,184,0.08)" } },
+          axisLabel: { color: "#8ea3bf" }
+        },
+        series: [{
+          data: series,
+          type: "bar",
+          barWidth: 18,
+          itemStyle: {
+            borderRadius: [10, 10, 0, 0],
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: "#60a5fa" },
+              { offset: 1, color: "#34d399" }
+            ])
+          }
+        }]
+      });
+    }
+
+    function renderModules(items) {
+      moduleChart.setOption({
+        tooltip: { trigger: "item" },
+        series: [{
+          type: "pie",
+          radius: ["45%", "72%"],
+          center: ["50%", "52%"],
+          label: { color: "#eef6ff" },
+          labelLine: { lineStyle: { color: "rgba(148,163,184,0.4)" } },
+          data: items.map((item) => ({ name: item.name, value: item.value }))
+        }]
+      });
+    }
+
+    function renderMap(items) {
+      mapChart.setOption({
+        tooltip: {
+          trigger: "item",
+          formatter: (params) => {
+            const value = Array.isArray(params.value) ? params.value[2] : params.value;
+            return `${params.name}<br/>热度：${value || 0}`;
+          }
+        },
+        visualMap: {
+          min: 60,
+          max: 200,
+          calculable: false,
+          left: 10,
+          bottom: 10,
+          textStyle: { color: "#cfe7ff" },
+          inRange: {
+            color: ["#173b73", "#2563eb", "#34d399", "#67e8f9"]
+          }
+        },
+        geo3D: {
+          map: "china-bigscreen",
+          roam: true,
+          boxWidth: 120,
+          boxDepth: 90,
+          regionHeight: 3,
+          shading: "lambert",
+          light: {
+            main: { intensity: 1.1, alpha: 35, beta: 10 },
+            ambient: { intensity: 0.4 }
+          },
+          itemStyle: {
+            color: "#0f3f88",
+            borderColor: "#7dd3fc",
+            borderWidth: 0.8,
+            opacity: 1
+          },
+          emphasis: {
+            itemStyle: {
+              color: "#60a5fa"
+            },
+            label: {
+              show: false
+            }
+          },
+          viewControl: {
+            distance: 95,
+            alpha: 48,
+            beta: -8,
+            minDistance: 70,
+            maxDistance: 140
+          },
+          label: {
+            show: false
+          }
+        },
+        series: [
+          {
+            type: "map3D",
+            map: "china-bigscreen",
+            data: items.map((item) => ({ name: item.name, value: item.value }))
+          },
+          {
+            type: "scatter3D",
+            coordinateSystem: "geo3D",
+            symbolSize: (value) => Math.max(12, value[2] / 9),
+            itemStyle: {
+              color: "#67e8f9",
+              opacity: 0.92
+            },
+            data: items.map((item) => ({
+              name: item.name,
+              value: item.coord
+            }))
+          }
+        ]
+      });
+    }
+
+    function fillMetrics(overview, updatedAt) {
+      document.getElementById("updatedAt").textContent = `最近同步 ${updatedAt}`;
+      document.getElementById("openClawInstallations").textContent = overview.openClawInstallations;
+      document.getElementById("openClawOnlineNodes").textContent = overview.openClawOnlineNodes;
+      document.getElementById("aiDailyTasks").textContent = overview.aiDailyTasks;
+      document.getElementById("aiPassRate").textContent = `${overview.aiPassRate}%`;
+      document.getElementById("extractionRate").textContent = `${overview.extractionRate}%`;
+      document.getElementById("avgLatency").textContent = `${overview.avgLatency}s`;
+    }
+
+    async function loadRealtime() {
+      try {
+        const response = await fetch(API_BASE_URL + "/api/bigscreen/realtime", {
+          credentials: "same-origin"
+        });
+
+        if (response.status === 401) {
+          window.location.replace(PAGE_BASE_URL + "/login.html");
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error("load failed");
+        }
+
+        const result = await response.json();
+        const data = result.data;
+        fillMetrics(data.overview, data.updatedAt);
+        renderRegionList(data.regionHeat || []);
+        renderStatusList(data.overview, data.alerts || []);
+        renderInstallTrend(data.installTrend || []);
+        renderAiTrend(data.aiTrend || []);
+        renderModules(data.aiModules || []);
+        await ensureChinaMap();
+        renderMap(data.regionHeat || []);
+      } catch (error) {
+        document.getElementById("updatedAt").textContent = "同步失败";
+      }
+    }
+
+    loadRealtime();
+    setInterval(loadRealtime, 10000);
+    window.addEventListener("resize", () => {
+      mapChart.resize();
+      installTrendChart.resize();
+      aiTrendChart.resize();
+      moduleChart.resize();
+    });
+  </script>
+</body>
+</html>

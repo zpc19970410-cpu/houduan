@@ -86,18 +86,21 @@
     }
 
     .topbar {
-      height: 90px;
-      padding: 0 28px;
+      min-height: 90px;
+      padding: 18px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 18px;
+      gap: 16px;
     }
 
     .title h1 {
       margin: 8px 0 0;
-      font-size: 34px;
-      letter-spacing: 0.04em;
+      font-size: clamp(26px, 3vw, 42px);
+      line-height: 1.18;
+      letter-spacing: 0.02em;
+      max-width: 620px;
     }
 
     .title p {
@@ -110,6 +113,8 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .chip, .btn {
@@ -203,10 +208,29 @@
       margin-top: 14px;
     }
 
+    .chart-caption {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
     .list {
       display: grid;
       gap: 12px;
       margin-top: 14px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .list::-webkit-scrollbar-thumb {
+      background: rgba(103, 232, 249, 0.18);
+      border-radius: 999px;
     }
 
     .list-item {
@@ -250,6 +274,33 @@
     .status-row span { color: var(--muted); font-size: 13px; }
     .status-value { color: var(--cyan); font-size: 18px; font-weight: 700; }
 
+    .map-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .map-note span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
     .footer-note {
       margin-top: 10px;
       color: var(--muted);
@@ -270,6 +321,13 @@
         grid-template-columns: 1fr;
       }
       .center { min-height: 720px; }
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .top-actions {
+        justify-content: flex-start;
+      }
     }
   </style>
 </head>
@@ -293,6 +351,7 @@
           </div>
         </div>
         <div class="chart" id="installTrendChart"></div>
+        <div class="chart-caption">安装趋势：展示 OpenClaw 节点接入量在今日各时段的累计变化。</div>
       </section>
 
       <section class="card">
@@ -321,6 +380,12 @@
             <small>National Distribution</small>
             <h2>中国安装分布地图</h2>
             <p>实时高亮各省安装强度，并叠加运行热点与 AI 业务热区。</p>
+            <div class="map-note">
+              <span><i class="dot" style="background:#1d4ed8"></i>60-90 低热度</span>
+              <span><i class="dot" style="background:#2563eb"></i>91-120 常规</span>
+              <span><i class="dot" style="background:#14b8a6"></i>121-150 活跃</span>
+              <span><i class="dot" style="background:#f59e0b"></i>151+ 热点</span>
+            </div>
           </div>
           <div class="chip">实时轮询中</div>
         </div>
@@ -356,6 +421,7 @@
           </div>
         </div>
         <div class="chart" id="aiTrendChart"></div>
+        <div class="chart-caption">AI 任务趋势：展示审核、提取、匹配等任务在今日各时段的处理量。</div>
       </section>
 
       <section class="card">
@@ -441,7 +507,7 @@
 
     function renderInstallTrend(series) {
       installTrendChart.setOption({
-        grid: { left: 18, right: 18, top: 26, bottom: 20 },
+        grid: { left: 46, right: 18, top: 26, bottom: 28, containLabel: true },
         xAxis: {
           type: "category",
           boundaryGap: false,
@@ -451,6 +517,7 @@
         },
         yAxis: {
           type: "value",
+          minInterval: 10,
           splitLine: { lineStyle: { color: "rgba(148,163,184,0.08)" } },
           axisLabel: { color: "#8ea3bf" }
         },
@@ -474,7 +541,7 @@
 
     function renderAiTrend(series) {
       aiTrendChart.setOption({
-        grid: { left: 18, right: 18, top: 26, bottom: 20 },
+        grid: { left: 46, right: 18, top: 26, bottom: 28, containLabel: true },
         xAxis: {
           type: "category",
           axisLine: { lineStyle: { color: "rgba(148,163,184,0.2)" } },
@@ -483,6 +550,7 @@
         },
         yAxis: {
           type: "value",
+          minInterval: 10,
           splitLine: { lineStyle: { color: "rgba(148,163,184,0.08)" } },
           axisLabel: { color: "#8ea3bf" }
         },
@@ -522,28 +590,32 @@
           formatter: (params) => `${params.name}<br/>热度：${params.value || 0}`
         },
         visualMap: {
-          min: 60,
-          max: 200,
+          type: "piecewise",
+          pieces: [
+            { min: 151, label: "151+", color: "#f59e0b" },
+            { min: 121, max: 150, label: "121-150", color: "#14b8a6" },
+            { min: 91, max: 120, label: "91-120", color: "#2563eb" },
+            { min: 60, max: 90, label: "60-90", color: "#1d4ed8" }
+          ],
           calculable: false,
           left: 10,
           bottom: 10,
           textStyle: { color: "#cfe7ff" },
-          inRange: {
-            color: ["#173b73", "#2563eb", "#34d399", "#67e8f9"]
-          }
+          itemWidth: 14,
+          itemHeight: 10
         },
         geo: {
           map: "china-bigscreen",
           roam: true,
-          zoom: 1.08,
+          zoom: 1.12,
           itemStyle: {
-            areaColor: "#0f3f88",
+            areaColor: "#173b73",
             borderColor: "#7dd3fc",
             borderWidth: 0.8
           },
           emphasis: {
             itemStyle: {
-              areaColor: "#60a5fa"
+              areaColor: "#67e8f9"
             },
             label: {
               show: false
@@ -587,15 +659,19 @@
           }
         },
         visualMap: {
-          min: 60,
-          max: 200,
+          type: "piecewise",
+          pieces: [
+            { min: 151, label: "151+", color: "#f59e0b" },
+            { min: 121, max: 150, label: "121-150", color: "#14b8a6" },
+            { min: 91, max: 120, label: "91-120", color: "#2563eb" },
+            { min: 60, max: 90, label: "60-90", color: "#1d4ed8" }
+          ],
           calculable: false,
           left: 10,
           bottom: 10,
           textStyle: { color: "#cfe7ff" },
-          inRange: {
-            color: ["#173b73", "#2563eb", "#34d399", "#67e8f9"]
-          }
+          itemWidth: 14,
+          itemHeight: 10
         },
         geo3D: {
           map: "china-bigscreen",
@@ -609,23 +685,23 @@
             ambient: { intensity: 0.4 }
           },
           itemStyle: {
-            color: "#0f3f88",
+            color: "#173b73",
             borderColor: "#7dd3fc",
             borderWidth: 0.8,
             opacity: 1
           },
           emphasis: {
             itemStyle: {
-              color: "#60a5fa"
+              color: "#67e8f9"
             },
             label: {
               show: false
             }
           },
           viewControl: {
-            distance: 95,
-            alpha: 48,
-            beta: -8,
+            distance: 88,
+            alpha: 52,
+            beta: -6,
             minDistance: 70,
             maxDistance: 140
           },

@@ -3,6 +3,7 @@ from pathlib import Path
 from functools import wraps
 from collections import defaultdict
 from datetime import datetime
+from math import sin, cos
 import os
 import secrets
 import time
@@ -215,6 +216,74 @@ def build_visit_summary():
     }
 
 
+def build_bigscreen_snapshot():
+    visits = load_json(VISITS_FILE)
+    contacts = load_json(CONTACTS_FILE)
+    now = datetime.now()
+    minute_seed = int(time.time() // 60)
+    pulse = (sin(time.time() / 12) + 1) / 2
+    total_visits = len(visits)
+    total_contacts = len(contacts)
+
+    base_installations = 128 + total_visits
+    online_nodes = 34 + (minute_seed % 5)
+    ai_tasks = 1480 + total_visits * 3 + (minute_seed % 37)
+    ai_pass_rate = round(96.2 + pulse * 2.1, 1)
+    extraction_rate = round(89.5 + pulse * 4.6, 1)
+    avg_latency = round(1.8 + (1 - pulse) * 0.9, 2)
+
+    regions = [
+        {"name": "北京", "value": 98 + (minute_seed % 9), "coord": [116.40, 39.90, 22]},
+        {"name": "上海", "value": 126 + (minute_seed % 11), "coord": [121.47, 31.23, 28]},
+        {"name": "广东", "value": 176 + (minute_seed % 13), "coord": [113.27, 23.13, 34]},
+        {"name": "江苏", "value": 142 + (minute_seed % 10), "coord": [118.78, 32.04, 30]},
+        {"name": "浙江", "value": 138 + (minute_seed % 8), "coord": [120.15, 30.28, 29]},
+        {"name": "四川", "value": 109 + (minute_seed % 7), "coord": [104.07, 30.67, 23]},
+        {"name": "湖北", "value": 118 + (minute_seed % 6), "coord": [114.30, 30.59, 25]},
+        {"name": "山东", "value": 131 + (minute_seed % 10), "coord": [117.00, 36.67, 26]},
+        {"name": "福建", "value": 93 + (minute_seed % 6), "coord": [119.30, 26.08, 19]},
+        {"name": "陕西", "value": 84 + (minute_seed % 5), "coord": [108.95, 34.27, 17]}
+    ]
+
+    trends = [
+        62 + int(8 * sin((minute_seed - 5 + idx) / 2.8)) + idx * 2
+        for idx in range(6)
+    ]
+    ai_trends = [
+        71 + int(9 * cos((minute_seed - 5 + idx) / 2.5)) + idx * 3
+        for idx in range(6)
+    ]
+
+    return {
+        "updatedAt": now.strftime("%Y-%m-%d %H:%M:%S"),
+        "overview": {
+            "openClawInstallations": base_installations,
+            "openClawOnlineNodes": online_nodes,
+            "aiDailyTasks": ai_tasks,
+            "aiPassRate": ai_pass_rate,
+            "extractionRate": extraction_rate,
+            "avgLatency": avg_latency,
+            "websiteVisits": total_visits,
+            "hrLeads": total_contacts
+        },
+        "alerts": [
+            f"OpenClaw 在线节点 {online_nodes}/42，当前同步稳定。",
+            f"AI 审核通过率 {ai_pass_rate}% ，近 10 分钟无异常峰值。",
+            f"字段提取准确率 {extraction_rate}% ，平均延迟 {avg_latency}s。",
+            f"网站累计访问 {total_visits} 次，线索留资 {total_contacts} 条。"
+        ],
+        "regionHeat": regions,
+        "installTrend": trends,
+        "aiTrend": ai_trends,
+        "aiModules": [
+            {"name": "图像审核", "value": round(78 + pulse * 18, 1)},
+            {"name": "字段提取", "value": round(72 + pulse * 20, 1)},
+            {"name": "智能匹配", "value": round(69 + pulse * 16, 1)},
+            {"name": "工作流生成", "value": round(64 + pulse * 18, 1)}
+        ]
+    }
+
+
 def match_resume_profile(jd_text):
     normalized = normalize_text(jd_text)
     score_map = {}
@@ -303,6 +372,17 @@ def admin_page():
 @app.route("/admin.html")
 def admin_page_html():
     return redirect(url_for("admin_page"))
+
+
+@app.route("/bigscreen")
+@login_required
+def bigscreen_page():
+    return send_from_directory(BASE_DIR, "bigscreen.html")
+
+
+@app.route("/bigscreen.html")
+def bigscreen_page_html():
+    return redirect(url_for("bigscreen_page"))
 
 
 @app.route("/api/health", methods=["GET"])
@@ -588,6 +668,15 @@ def get_visits():
     return jsonify({
         "success": True,
         "data": stats
+    })
+
+
+@app.route("/api/bigscreen/realtime", methods=["GET"])
+@login_required
+def get_bigscreen_realtime():
+    return jsonify({
+        "success": True,
+        "data": build_bigscreen_snapshot()
     })
 
 

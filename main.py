@@ -531,6 +531,26 @@ def me():
     })
 
 
+@app.route("/api/session-status", methods=["GET"])
+def session_status():
+    user = current_user()
+    if not user:
+        return jsonify({
+            "success": True,
+            "authenticated": False
+        })
+
+    return jsonify({
+        "success": True,
+        "authenticated": True,
+        "user": {
+            "id": user["id"],
+            "username": user["username"],
+            "name": user["name"]
+        }
+    })
+
+
 @app.route("/api/logout", methods=["POST"])
 def logout():
     session.clear()

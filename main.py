@@ -9,6 +9,15 @@ import json
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 app.secret_key = "jung-my-team-demo-secret-key"
+IS_PRODUCTION = os.getenv("RENDER") == "true" or os.getenv("ENV") == "production"
+ALLOWED_ORIGINS = {
+    "https://my-xbbu.onrender.com",
+    "http://127.0.0.1:5000",
+    "http://localhost:5000",
+    "null"
+}
+app.config["SESSION_COOKIE_SAMESITE"] = "None" if IS_PRODUCTION else "Lax"
+app.config["SESSION_COOKIE_SECURE"] = IS_PRODUCTION
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -166,6 +175,18 @@ def login_required(view_func):
         return view_func(*args, **kwargs)
 
     return wrapped
+
+
+@app.after_request
+def add_cors_headers(response):
+    origin = request.headers.get("Origin")
+    if origin in ALLOWED_ORIGINS:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Vary"] = "Origin"
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    return response
 
 
 ensure_data_files()

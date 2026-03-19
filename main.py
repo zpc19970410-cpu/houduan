@@ -136,18 +136,6 @@ def normalize_text(text):
     return " ".join(str(text).lower().split())
 
 
-def mask_ip(ip_address):
-    if ":" in ip_address:
-        parts = ip_address.split(":")
-        if len(parts) > 2:
-            return ":".join(parts[:3]) + ":*"
-        return ip_address
-    parts = ip_address.split(".")
-    if len(parts) == 4:
-        return ".".join(parts[:3]) + ".*"
-    return ip_address
-
-
 def parse_device_label(user_agent):
     ua = (user_agent or "").lower()
     if not ua:
@@ -183,13 +171,13 @@ def record_visit(payload):
         "path": str(payload.get("path") or request.path or "/").strip() or "/",
         "title": str(payload.get("title") or "").strip(),
         "referrer": str(payload.get("referrer") or request.referrer or "").strip(),
-        "ip": mask_ip(client_ip()),
+        "ip": client_ip(),
         "device": parse_device_label(user_agent),
         "browser": parse_browser_label(user_agent),
         "userAgent": user_agent[:220],
         "visitedAt": now.strftime("%Y-%m-%d %H:%M:%S"),
         "visitedDate": now.strftime("%Y-%m-%d"),
-        "visitorKey": f"{mask_ip(client_ip())}|{parse_browser_label(user_agent)}|{parse_device_label(user_agent)}"
+        "visitorKey": f"{client_ip()}|{parse_browser_label(user_agent)}|{parse_device_label(user_agent)}"
     }
     visits.append(visit_item)
     if len(visits) > MAX_VISIT_RECORDS:

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>后台登录｜赵培成个人站</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(255, 255, 255, 0.07);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #f4f8ff;
+      --text-soft: #aebbd2;
+      --cyan: #74e9ff;
+      --accent: #dff7ff;
+      --danger: #ff7f96;
+      --ok: #7dffbe;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(rgba(4, 10, 24, 0.72), rgba(4, 10, 24, 0.82)),
+        url("https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1800&q=80") center/cover no-repeat;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .panel {
+      width: min(460px, 100%);
+      padding: 34px 30px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(8, 17, 34, 0.84), rgba(8, 17, 34, 0.92)),
+        var(--panel);
+      backdrop-filter: blur(22px);
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid rgba(116, 233, 255, 0.18);
+      border-radius: 999px;
+      background: rgba(116, 233, 255, 0.08);
+      color: #dbfaff;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+    }
+
+    h1 {
+      margin: 18px 0 10px;
+      font-size: 34px;
+      line-height: 1.12;
+    }
+
+    .desc {
+      margin: 0 0 24px;
+      color: var(--text-soft);
+      line-height: 1.85;
+      font-size: 15px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #dfe8f7;
+    }
+
+    input {
+      width: 100%;
+      height: 50px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(4, 10, 24, 0.85);
+      color: var(--text);
+      padding: 0 16px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: rgba(116, 233, 255, 0.44);
+      box-shadow: 0 0 0 4px rgba(116, 233, 255, 0.1);
+    }
+
+    .options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 14px 0 18px;
+      color: var(--text-soft);
+      font-size: 14px;
+    }
+
+    .remember {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .remember input {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+    }
+
+    .slider-box {
+      margin-top: 6px;
+      margin-bottom: 18px;
+    }
+
+    .slider-label {
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #dfe8f7;
+    }
+
+    .slider-track {
+      position: relative;
+      height: 52px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .slider-target {
+      position: absolute;
+      top: 6px;
+      width: 58px;
+      height: 40px;
+      border-radius: 14px;
+      border: 1px dashed rgba(116, 233, 255, 0.38);
+      background: rgba(116, 233, 255, 0.12);
+      box-shadow: inset 0 0 0 1px rgba(116, 233, 255, 0.06);
+      pointer-events: none;
+    }
+
+    .slider-progress {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0;
+      background: linear-gradient(90deg, rgba(116, 233, 255, 0.22), rgba(143, 170, 255, 0.2));
+      transition: width 0.1s ease;
+    }
+
+    .slider-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #dce9f8;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      pointer-events: none;
+    }
+
+    .slider-thumb {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 58px;
+      height: 52px;
+      border: 0;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #ffffff, var(--accent));
+      color: #04111d;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: grab;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+      transition: left 0.1s ease;
+    }
+
+    .slider-track.success .slider-thumb {
+      background: linear-gradient(135deg, #b9ffdf, #7dffbe);
+    }
+
+    .slider-track.success .slider-text {
+      color: #dffff0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .btn {
+      height: 48px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 20px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: 0.22s ease;
+    }
+
+    .btn-primary {
+      flex: 1;
+      color: #04111d;
+      background: linear-gradient(90deg, #ffffff, var(--accent));
+      font-weight: 700;
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--line);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .message {
+      min-height: 22px;
+      margin-top: 14px;
+      font-size: 14px;
+    }
+
+    .message.error {
+      color: var(--danger);
+    }
+
+    .message.success {
+      color: var(--ok);
+    }
+
+    @media (max-width: 560px) {
+      .panel {
+        padding: 26px 20px;
+      }
+
+      .actions,
+      .options {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="panel">
+    <div class="eyebrow">后台登录</div>
+    <h1>登录进入后台</h1>
+    <p class="desc">请输入账号密码，并完成滑动验证后进入后台管理页。</p>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="username">账号</label>
+        <input id="username" name="username" type="text" placeholder="请输入账号" autocomplete="username" />
+      </div>
+
+      <div class="field">
+        <label for="password">密码</label>
+        <input id="password" name="password" type="password" placeholder="请输入密码" autocomplete="current-password" />
+      </div>
+
+      <div class="options">
+        <label class="remember" for="rememberPassword">
+          <input id="rememberPassword" type="checkbox" />
+          <span>保存账号密码</span>
+        </label>
+        <a href="./index.html">返回首页</a>
+      </div>
+
+      <div class="slider-box">
+        <div class="slider-label">安全验证</div>
+        <div class="slider-track" id="sliderTrack">
+          <div class="slider-target" id="sliderTarget"></div>
+          <div class="slider-progress" id="sliderProgress"></div>
+          <div class="slider-text" id="sliderText">正在加载验证...</div>
+          <button class="slider-thumb" id="sliderThumb" type="button">»</button>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">登录进入后台</button>
+        <button class="btn btn-secondary" id="resetVerify" type="button">重置验证</button>
+      </div>
+      <div id="message" class="message"></div>
+    </form>
+  </section>
+
+  <script>
+    const API_BASE_URL = window.location.protocol === "file:" ? "http://127.0.0.1:5000" : "";
+    const PAGE_BASE_URL = window.location.protocol === "file:" ? "http://127.0.0.1:5000" : window.location.origin;
+    const REMEMBER_KEY = "jung-login-remember";
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("message");
+    const rememberPassword = document.getElementById("rememberPassword");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const sliderTrack = document.getElementById("sliderTrack");
+    const sliderTarget = document.getElementById("sliderTarget");
+    const sliderThumb = document.getElementById("sliderThumb");
+    const sliderProgress = document.getElementById("sliderProgress");
+    const sliderText = document.getElementById("sliderText");
+    const resetVerify = document.getElementById("resetVerify");
+
+    let captchaChallenge = null;
+    let captchaTicket = "";
+    let verified = false;
+    let dragging = false;
+    let startX = 0;
+    let startLeft = 0;
+
+    function loadRememberedAccount() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(REMEMBER_KEY) || "null");
+        if (!saved) return;
+        usernameInput.value = saved.username || "";
+        passwordInput.value = saved.password || "";
+        rememberPassword.checked = true;
+      } catch (error) {}
+    }
+
+    function saveRememberedAccount() {
+      if (!rememberPassword.checked) {
+        localStorage.removeItem(REMEMBER_KEY);
+        return;
+      }
+
+      localStorage.setItem(REMEMBER_KEY, JSON.stringify({
+        username: usernameInput.value.trim(),
+        password: passwordInput.value.trim()
+      }));
+    }
+
+    function resetSlider() {
+      verified = false;
+      dragging = false;
+      captchaTicket = "";
+      sliderTrack.classList.remove("success");
+      sliderThumb.style.left = "0px";
+      sliderProgress.style.width = "0px";
+      sliderText.textContent = captchaChallenge ? "请拖动滑块，对齐发光验证槽" : "正在加载验证...";
+    }
+
+    function setSliderPosition(nextLeft) {
+      const maxLeft = sliderTrack.clientWidth - sliderThumb.offsetWidth;
+      const safeLeft = Math.max(0, Math.min(nextLeft, maxLeft));
+      sliderThumb.style.left = safeLeft + "px";
+      sliderProgress.style.width = safeLeft + sliderThumb.offsetWidth + "px";
+    }
+
+    async function loadCaptchaChallenge() {
+      captchaChallenge = null;
+      captchaTicket = "";
+      sliderTarget.style.display = "none";
+      resetSlider();
+
+      try {
+        const response = await fetch(API_BASE_URL + "/api/captcha/challenge", {
+          credentials: "same-origin"
+        });
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          sliderText.textContent = "验证加载失败，请稍后重试";
+          return;
+        }
+
+        captchaChallenge = result.challenge;
+        sliderTarget.style.left = captchaChallenge.targetLeft + "px";
+        sliderTarget.style.display = "block";
+        resetSlider();
+      } catch (error) {
+        sliderText.textContent = "验证加载失败，请检查后端服务";
+      }
+    }
+
+    async function verifySlider() {
+      if (!captchaChallenge) {
+        message.textContent = "验证未初始化，请重试。";
+        message.className = "message error";
+        return false;
+      }
+
+      const sliderLeft = parseFloat(sliderThumb.style.left || "0") || 0;
+
+      try {
+        const response = await fetch(API_BASE_URL + "/api/captcha/verify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "same-origin",
+          body: JSON.stringify({
+            challengeId: captchaChallenge.id,
+            sliderLeft
+          })
+        });
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          message.textContent = result.message || "滑动验证未通过。";
+          message.className = "message error";
+          await loadCaptchaChallenge();
+          return false;
+        }
+
+        captchaTicket = result.captchaTicket;
+        verified = true;
+        sliderTrack.classList.add("success");
+        sliderProgress.style.width = "100%";
+        sliderThumb.style.left = captchaChallenge.targetLeft + "px";
+        sliderText.textContent = "验证成功";
+        message.textContent = "";
+        message.className = "message";
+        return true;
+      } catch (error) {
+        message.textContent = "验证服务不可用，请稍后重试。";
+        message.className = "message error";
+        return false;
+      }
+    }
+
+    function handlePointerMove(clientX) {
+      if (!dragging || verified) return;
+      setSliderPosition(startLeft + clientX - startX);
+    }
+
+    sliderThumb.addEventListener("mousedown", (event) => {
+      if (verified) return;
+      dragging = true;
+      startX = event.clientX;
+      startLeft = parseFloat(sliderThumb.style.left || "0") || 0;
+      sliderThumb.style.cursor = "grabbing";
+    });
+
+    document.addEventListener("mousemove", (event) => {
+      handlePointerMove(event.clientX);
+    });
+
+    document.addEventListener("mouseup", () => {
+      sliderThumb.style.cursor = "grab";
+      if (!dragging) return;
+      dragging = false;
+      if (!verified) {
+        verifySlider();
+      }
+    });
+
+    sliderThumb.addEventListener("touchstart", (event) => {
+      if (verified) return;
+      dragging = true;
+      startX = event.touches[0].clientX;
+      startLeft = parseFloat(sliderThumb.style.left || "0") || 0;
+    }, { passive: true });
+
+    document.addEventListener("touchmove", (event) => {
+      if (!dragging) return;
+      handlePointerMove(event.touches[0].clientX);
+    }, { passive: true });
+
+    document.addEventListener("touchend", () => {
+      if (!dragging) return;
+      dragging = false;
+      if (!verified) {
+        verifySlider();
+      }
+    });
+
+    resetVerify.addEventListener("click", loadCaptchaChallenge);
+
+    fetch(API_BASE_URL + "/api/me", {
+      credentials: "same-origin"
+    }).then((response) => {
+      if (response.ok) {
+        window.location.replace(PAGE_BASE_URL + "/admin.html");
+      }
+    }).catch(() => {});
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!username || !password) {
+        message.textContent = "请输入账号和密码。";
+        message.className = "message error";
+        return;
+      }
+
+      if (!verified) {
+        message.textContent = "请先完成滑动验证。";
+        message.className = "message error";
+        return;
+      }
+
+      saveRememberedAccount();
+
+      try {
+        const response = await fetch(API_BASE_URL + "/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "same-origin",
+          body: JSON.stringify({
+            username,
+            password,
+            captchaTicket
+          })
+        });
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          message.textContent = result.message || "登录失败，请稍后重试。";
+          message.className = "message error";
+          await loadCaptchaChallenge();
+          return;
+        }
+
+        message.textContent = "登录成功，正在进入后台管理页...";
+        message.className = "message success";
+        window.location.href = PAGE_BASE_URL + "/admin.html";
+      } catch (error) {
+        message.textContent = "无法连接后端服务，请先启动 Flask 服务。";
+        message.className = "message error";
+      }
+    });
+
+    loadRememberedAccount();
+    loadCaptchaChallenge();
+  </script>
+</body>
+</html>

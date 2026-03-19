@@ -1627,6 +1627,7 @@
 
   <script>
     const API_BASE_URL = window.location.protocol === "file:" ? "http://127.0.0.1:5000" : "";
+    const VISIT_SESSION_KEY = "jung_site_visit_tracked";
     const particleWrap = document.getElementById("particles");
     for (let i = 0; i < 28; i++) {
       const p = document.createElement("span");
@@ -1660,6 +1661,33 @@
     const resumeFit = document.getElementById("resumeFit");
     const resumeKeywords = document.getElementById("resumeKeywords");
     const resumeDownloadLink = document.getElementById("resumeDownloadLink");
+
+    async function trackVisit() {
+      if (window.location.protocol === "file:") {
+        return;
+      }
+
+      if (sessionStorage.getItem(VISIT_SESSION_KEY) === "1") {
+        return;
+      }
+
+      try {
+        await fetch(API_BASE_URL + "/api/visit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            path: window.location.pathname,
+            title: document.title,
+            referrer: document.referrer
+          })
+        });
+        sessionStorage.setItem(VISIT_SESSION_KEY, "1");
+      } catch (error) {
+      }
+    }
 
     clearJdBtn?.addEventListener("click", () => {
       jdText.value = "";
@@ -1714,6 +1742,8 @@
         resumeMessage.textContent = "无法连接后端服务，请稍后重试。";
       }
     });
+
+    trackVisit();
   </script>
 </body>
 </html>

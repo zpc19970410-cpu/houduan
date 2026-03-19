@@ -492,10 +492,15 @@
 
     resetVerify.addEventListener("click", loadCaptchaChallenge);
 
-    fetch(API_BASE_URL + "/api/me", {
+    fetch(API_BASE_URL + "/api/session-status", {
       credentials: "same-origin"
     }).then((response) => {
-      if (response.ok) {
+      if (!response.ok) {
+        return null;
+      }
+      return response.json();
+    }).then((result) => {
+      if (result && result.authenticated) {
         window.location.replace(PAGE_BASE_URL + "/admin.html");
       }
     }).catch(() => {});

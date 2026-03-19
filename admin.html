@@ -475,6 +475,66 @@
       margin-top: 14px;
     }
 
+    .visit-list {
+      margin-top: 14px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .visit-item {
+      border: 1px solid var(--line);
+      background: var(--paper-soft);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .visit-item-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .visit-item-top strong {
+      font-size: 16px;
+    }
+
+    .visit-time {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .visit-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .visit-meta-block {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .visit-meta-block small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .visit-meta-block span {
+      display: block;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--ink);
+      word-break: break-all;
+    }
+
     .data-table th,
     .data-table td {
       text-align: left;
@@ -596,6 +656,15 @@
       .data-table {
         display: block;
         overflow-x: auto;
+      }
+
+      .visit-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .visit-item-top {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -742,23 +811,9 @@
             </div>
             <div class="badge" id="visitStatus">等待加载</div>
           </div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>时间</th>
-                <th>页面</th>
-                <th>设备</th>
-                <th>浏览器</th>
-                <th>来源</th>
-                <th>IP</th>
-              </tr>
-            </thead>
-            <tbody id="visitTableBody">
-              <tr>
-                <td colspan="6">正在读取访问记录...</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="visit-list" id="visitList">
+            <div class="visit-item">正在读取访问记录...</div>
+          </div>
         </div>
 
         <div class="timeline-card">
@@ -953,27 +1008,39 @@
     const uniqueVisitors = document.getElementById("uniqueVisitors");
     const mobileVisits = document.getElementById("mobileVisits");
     const visitStatus = document.getElementById("visitStatus");
-    const visitTableBody = document.getElementById("visitTableBody");
+    const visitList = document.getElementById("visitList");
 
     function renderVisitRows(items) {
       if (!items || items.length === 0) {
-        visitTableBody.innerHTML = `
-          <tr>
-            <td colspan="6">暂时还没有访问记录。</td>
-          </tr>
-        `;
+        visitList.innerHTML = `<div class="visit-item">暂时还没有访问记录。</div>`;
         return;
       }
 
-      visitTableBody.innerHTML = items.map((item) => `
-        <tr>
-          <td>${item.visitedAt}</td>
-          <td>${item.title || item.path}</td>
-          <td>${item.device}</td>
-          <td>${item.browser}</td>
-          <td>${item.referrer}</td>
-          <td>${item.ip}</td>
-        </tr>
+      visitList.innerHTML = items.map((item) => `
+        <article class="visit-item">
+          <div class="visit-item-top">
+            <strong>${item.title || item.path}</strong>
+            <span class="visit-time">${item.visitedAt}</span>
+          </div>
+          <div class="visit-meta">
+            <div class="visit-meta-block">
+              <small>页面路径</small>
+              <span>${item.path}</span>
+            </div>
+            <div class="visit-meta-block">
+              <small>设备与浏览器</small>
+              <span>${item.device} / ${item.browser}</span>
+            </div>
+            <div class="visit-meta-block">
+              <small>来源</small>
+              <span>${item.referrer}</span>
+            </div>
+            <div class="visit-meta-block">
+              <small>IP 地址</small>
+              <span>${item.ip}</span>
+            </div>
+          </div>
+        </article>
       `).join("");
     }
 
@@ -998,11 +1065,7 @@
         renderVisitRows(stats.recent || []);
       } catch (error) {
         visitStatus.textContent = "读取失败";
-        visitTableBody.innerHTML = `
-          <tr>
-            <td colspan="6">无法读取访问数据，请确认后端服务正常。</td>
-          </tr>
-        `;
+        visitList.innerHTML = `<div class="visit-item">无法读取访问数据，请确认后端服务正常。</div>`;
       }
     }
 

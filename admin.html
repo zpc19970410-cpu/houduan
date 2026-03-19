@@ -226,6 +226,7 @@
     }
 
     .hero-grid,
+    .cards-4,
     .cards-3,
     .cards-2 {
       display: grid;
@@ -235,6 +236,11 @@
     .hero-grid {
       grid-template-columns: 1.4fr 1fr;
       margin-bottom: 18px;
+    }
+
+    .cards-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 18px;
     }
 
     .cards-3 {
@@ -547,6 +553,7 @@
 
     @media (max-width: 1200px) {
       .hero-grid,
+      .cards-4,
       .cards-2 {
         grid-template-columns: 1fr;
       }
@@ -605,9 +612,10 @@
       <div class="nav-group">
         <div class="nav-title">导航</div>
         <a class="nav-link active" href="#overview"><span>01</span>总览驾驶舱</a>
-        <a class="nav-link" href="#projects"><span>02</span>项目管理</a>
-        <a class="nav-link" href="#ai"><span>03</span>AI 能力台</a>
-        <a class="nav-link" href="#delivery"><span>04</span>交付表现</a>
+        <a class="nav-link" href="#visitors"><span>02</span>访客概览</a>
+        <a class="nav-link" href="#projects"><span>03</span>项目管理</a>
+        <a class="nav-link" href="#ai"><span>04</span>AI 能力台</a>
+        <a class="nav-link" href="#delivery"><span>05</span>交付表现</a>
       </div>
 
       <div class="nav-group">
@@ -690,6 +698,84 @@
             <small>用户满意度</small>
             <strong>92%</strong>
             <p>重点项目中形成明确正反馈。</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-head" id="visitors">
+        <div>
+          <h3>访客概览</h3>
+          <p>这里展示网站访问量、今日访问、访客去重和最近访问记录，方便你在后台直接看到谁来过。</p>
+        </div>
+        <div class="badge">实时统计</div>
+      </div>
+
+      <section class="cards-4">
+        <div class="metric">
+          <small>累计访问</small>
+          <strong id="totalVisits">0</strong>
+          <p>站点从上线到现在的总访问次数。</p>
+        </div>
+        <div class="metric">
+          <small>今日访问</small>
+          <strong id="todayVisits">0</strong>
+          <p>按当天日期统计的访问量。</p>
+        </div>
+        <div class="metric">
+          <small>访客去重</small>
+          <strong id="uniqueVisitors">0</strong>
+          <p>按设备和来源做近似去重后的访客数。</p>
+        </div>
+        <div class="metric">
+          <small>移动端访问</small>
+          <strong id="mobileVisits">0</strong>
+          <p>方便判断访客主要来自手机还是电脑。</p>
+        </div>
+      </section>
+
+      <section class="cards-2">
+        <div class="table-card">
+          <div class="panel-header">
+            <div>
+              <small>最近访问</small>
+              <h3>访问记录</h3>
+            </div>
+            <div class="badge" id="visitStatus">等待加载</div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>时间</th>
+                <th>页面</th>
+                <th>设备</th>
+                <th>浏览器</th>
+                <th>来源</th>
+                <th>IP</th>
+              </tr>
+            </thead>
+            <tbody id="visitTableBody">
+              <tr>
+                <td colspan="6">正在读取访问记录...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="timeline-card">
+          <small>你能从这里看到什么</small>
+          <div class="timeline-list">
+            <div class="timeline-item">
+              <strong>首页是否真的有人在看</strong>
+              <p>不是只看页面存不存在，而是看实际访问量和最近访问时间。</p>
+            </div>
+            <div class="timeline-item">
+              <strong>访客更偏电脑还是手机</strong>
+              <p>如果 HR 多从微信或手机打开，你就要更关注移动端首屏表达。</p>
+            </div>
+            <div class="timeline-item">
+              <strong>投递后是否有回访</strong>
+              <p>你发完链接后，可以在后台快速判断是否有人回看过你的页面。</p>
+            </div>
           </div>
         </div>
       </section>
@@ -862,6 +948,63 @@
     const API_BASE_URL = window.location.protocol === "file:" ? "http://127.0.0.1:5000" : "";
     const PAGE_BASE_URL = window.location.protocol === "file:" ? "http://127.0.0.1:5000" : window.location.origin;
     const loginMeta = document.getElementById("loginMeta");
+    const totalVisits = document.getElementById("totalVisits");
+    const todayVisits = document.getElementById("todayVisits");
+    const uniqueVisitors = document.getElementById("uniqueVisitors");
+    const mobileVisits = document.getElementById("mobileVisits");
+    const visitStatus = document.getElementById("visitStatus");
+    const visitTableBody = document.getElementById("visitTableBody");
+
+    function renderVisitRows(items) {
+      if (!items || items.length === 0) {
+        visitTableBody.innerHTML = `
+          <tr>
+            <td colspan="6">暂时还没有访问记录。</td>
+          </tr>
+        `;
+        return;
+      }
+
+      visitTableBody.innerHTML = items.map((item) => `
+        <tr>
+          <td>${item.visitedAt}</td>
+          <td>${item.title || item.path}</td>
+          <td>${item.device}</td>
+          <td>${item.browser}</td>
+          <td>${item.referrer}</td>
+          <td>${item.ip}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function loadVisits() {
+      try {
+        const response = await fetch(API_BASE_URL + "/api/visits", {
+          credentials: "same-origin"
+        });
+
+        if (!response.ok) {
+          throw new Error("load visits failed");
+        }
+
+        const result = await response.json();
+        const stats = result.data || {};
+        const summary = stats.summary || {};
+        totalVisits.textContent = summary.totalVisits || 0;
+        todayVisits.textContent = summary.todayVisits || 0;
+        uniqueVisitors.textContent = summary.uniqueVisitors || 0;
+        mobileVisits.textContent = summary.mobileVisits || 0;
+        visitStatus.textContent = "已同步";
+        renderVisitRows(stats.recent || []);
+      } catch (error) {
+        visitStatus.textContent = "读取失败";
+        visitTableBody.innerHTML = `
+          <tr>
+            <td colspan="6">无法读取访问数据，请确认后端服务正常。</td>
+          </tr>
+        `;
+      }
+    }
 
     async function bootstrap() {
       try {
@@ -876,6 +1019,7 @@
 
         const result = await response.json();
         loginMeta.textContent = "当前账号：" + result.user.username + "，姓名：" + result.user.name + "。";
+        loadVisits();
       } catch (error) {
         loginMeta.textContent = "无法读取登录状态，请确认后端服务已启动。";
       }

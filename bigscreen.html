@@ -378,6 +378,18 @@
     const moduleChart = echarts.init(document.getElementById("moduleChart"));
     let chinaMapReady = false;
 
+    function supportsWebGL() {
+      try {
+        const canvas = document.createElement("canvas");
+        return Boolean(
+          window.WebGLRenderingContext &&
+          (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
+        );
+      } catch (error) {
+        return false;
+      }
+    }
+
     async function ensureChinaMap() {
       if (chinaMapReady) return;
       const response = await fetch("./china-map.json");
@@ -503,7 +515,69 @@
       });
     }
 
-    function renderMap(items) {
+    function renderMap2D(items) {
+      mapChart.setOption({
+        tooltip: {
+          trigger: "item",
+          formatter: (params) => `${params.name}<br/>热度：${params.value || 0}`
+        },
+        visualMap: {
+          min: 60,
+          max: 200,
+          calculable: false,
+          left: 10,
+          bottom: 10,
+          textStyle: { color: "#cfe7ff" },
+          inRange: {
+            color: ["#173b73", "#2563eb", "#34d399", "#67e8f9"]
+          }
+        },
+        geo: {
+          map: "china-bigscreen",
+          roam: true,
+          zoom: 1.08,
+          itemStyle: {
+            areaColor: "#0f3f88",
+            borderColor: "#7dd3fc",
+            borderWidth: 0.8
+          },
+          emphasis: {
+            itemStyle: {
+              areaColor: "#60a5fa"
+            },
+            label: {
+              show: false
+            }
+          }
+        },
+        series: [
+          {
+            type: "map",
+            map: "china-bigscreen",
+            geoIndex: 0,
+            data: items.map((item) => ({ name: item.name, value: item.value }))
+          },
+          {
+            type: "effectScatter",
+            coordinateSystem: "geo",
+            rippleEffect: {
+              scale: 4,
+              brushType: "stroke"
+            },
+            symbolSize: (value) => Math.max(10, value[2] / 7),
+            itemStyle: {
+              color: "#67e8f9"
+            },
+            data: items.map((item) => ({
+              name: item.name,
+              value: item.coord
+            }))
+          }
+        ]
+      });
+    }
+
+    function renderMap3D(items) {
       mapChart.setOption({
         tooltip: {
           trigger: "item",
@@ -580,6 +654,19 @@
           }
         ]
       });
+    }
+
+    function renderMap(items) {
+      if (!supportsWebGL()) {
+        renderMap2D(items);
+        return;
+      }
+
+      try {
+        renderMap3D(items);
+      } catch (error) {
+        renderMap2D(items);
+      }
     }
 
     function fillMetrics(overview, updatedAt) {

@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>赵培成｜AI 产品经理面试展示页</title>
+  <style>
+    :root {
+      --bg: #030712;
+      --bg-soft: rgba(148, 163, 184, 0.08);
+      --bg-card: rgba(10, 18, 34, 0.82);
+      --line: rgba(148, 163, 184, 0.14);
+      --line-strong: rgba(34, 211, 238, 0.32);
+      --text: #f8fafc;
+      --text-soft: #b8c4d8;
+      --text-dim: #7c8aa5;
+      --cyan: #67e8f9;
+      --blue: #60a5fa;
+      --violet: #818cf8;
+      --emerald: #34d399;
+      --white: #ffffff;
+      --shadow: 0 24px 80px rgba(2, 6, 23, 0.46);
+      --radius: 24px;
+      --radius-lg: 32px;
+      --max: 1200px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "SF Pro Display", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(52, 211, 153, 0.12), transparent 24%),
+        radial-gradient(circle at 82% 14%, rgba(96, 165, 250, 0.15), transparent 24%),
+        radial-gradient(circle at 55% 82%, rgba(129, 140, 248, 0.14), transparent 20%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.22), rgba(3, 7, 18, 0.18)),
+        var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(103,232,249,0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(103,232,249,0.04) 1px, transparent 1px);
+      background-size: 52px 52px;
+      opacity: 0.22;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(111, 231, 255, 0.85);
+      border-radius: 50%;
+      box-shadow: 0 0 14px rgba(111, 231, 255, 0.9);
+      animation: floatParticle linear infinite;
+    }
+
+    @keyframes floatParticle {
+      0% {
+        transform: translateY(0px) scale(0.9);
+        opacity: 0.25;
+      }
+      50% {
+        opacity: 0.95;
+      }
+      100% {
+        transform: translateY(-80px) scale(1.1);
+        opacity: 0.2;
+      }
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 40px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(22px);
+      background: rgba(3, 7, 18, 0.76);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-inner {
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      border: 1px solid rgba(111, 231, 255, 0.25);
+      background: linear-gradient(135deg, rgba(111, 231, 255, 0.14), rgba(168, 113, 255, 0.08));
+      box-shadow: 0 0 24px rgba(111, 231, 255, 0.14);
+      overflow: hidden;
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-text span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.22em;
+      margin-top: 2px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: var(--text-soft);
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 42px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: 0.25s ease;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(15, 23, 42, 0.65);
+      border-color: var(--line);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      color: #04111d;
+      background: linear-gradient(90deg, #ecfeff, #a5f3fc);
+      font-weight: 600;
+      box-shadow: 0 0 24px rgba(103, 232, 249, 0.22);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px) scale(1.01);
+    }
+
+    .btn-login {
+      color: #d8fffa;
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(52, 211, 153, 0.24);
+      box-shadow: 0 0 24px rgba(52, 211, 153, 0.12);
+    }
+
+    .btn-login:hover {
+      background: rgba(111, 231, 255, 0.16);
+      transform: translateY(-1px);
+    }
+
+    .hero {
+      padding: 72px 0 56px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(103, 232, 249, 0.28);
+      background: linear-gradient(90deg, rgba(8, 47, 73, 0.72), rgba(17, 24, 39, 0.74));
+      color: #d9f9ff;
+      font-size: 13px;
+      margin-bottom: 24px;
+      box-shadow: inset 0 0 0 1px rgba(103, 232, 249, 0.06);
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(40px, 7vw, 76px);
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+      max-width: 840px;
+    }
+
+    .gradient-text {
+      display: block;
+      margin-top: 8px;
+      background: linear-gradient(90deg, var(--cyan), var(--blue), var(--violet));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 24px rgba(96, 165, 250, 0.16);
+    }
+
+    .hero p {
+      margin: 26px 0 0;
+      max-width: 760px;
+      font-size: 18px;
+      line-height: 1.85;
+      color: var(--text-soft);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .mini-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .mini-card,
+    .glass-card,
+    .card,
+    .timeline-item,
+    .insight-card,
+    .cta-box {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+
+    .mini-card {
+      border-radius: 22px;
+      padding: 16px;
+      background:
+        linear-gradient(180deg, rgba(7, 15, 31, 0.92), rgba(10, 18, 34, 0.86));
+    }
+
+    .mini-card .label {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .mini-card .value {
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .glass-card {
+      position: relative;
+      border-radius: 30px;
+      padding: 24px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(8, 15, 28, 0.94), rgba(9, 18, 34, 0.88));
+    }
+
+    .glass-card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background: linear-gradient(135deg, rgba(52,211,153,0.18), rgba(96,165,250,0.12), rgba(129,140,248,0.14));
+      z-index: -1;
+      filter: blur(30px);
+    }
+
+    .ai-console-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .ai-console-head small {
+      color: #91a1bb;
+      letter-spacing: 0.14em;
+      font-size: 12px;
+    }
+
+    .ai-console-head h3 {
+      margin: 8px 0 0;
+      font-size: 24px;
+    }
+
+    .signal-live {
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #dcfff6;
+      border: 1px solid rgba(52, 211, 153, 0.24);
+      background: rgba(52, 211, 153, 0.1);
+    }
+
+    .ai-workflow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .ai-node {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .ai-node small {
+      color: #93a4bf;
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+    }
+
+    .ai-node strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .ai-arrow {
+      color: #7dd3fc;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .ai-log {
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(5, 10, 24, 0.92);
+      border: 1px solid rgba(103, 232, 249, 0.12);
+    }
+
+    .ai-log small {
+      color: #90a1bc;
+      letter-spacing: 0.12em;
+      font-size: 12px;
+    }
+
+    .ai-log ul {
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .ai-log li {
+      color: #d8e6f7;
+      font-size: 14px;
+      line-height: 1.7;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .ai-log li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 9px;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--emerald);
+      box-shadow: 0 0 12px rgba(52, 211, 153, 0.52);
+    }
+
+    .dashboard-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-head small {
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    .dashboard-head h3 {
+      margin: 5px 0 0;
+      font-size: 22px;
+    }
+
+    .status {
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #dbfaff;
+      border: 1px solid rgba(111, 231, 255, 0.2);
+      background: rgba(111, 231, 255, 0.1);
+    }
+
+    .metric-large,
+    .metric-soft,
+    .metric-box {
+      border-radius: 20px;
+      border: 1px solid var(--line);
+    }
+
+    .metric-large {
+      background: rgba(8, 14, 34, 0.9);
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .metric-large small,
+    .metric-soft small,
+    .metric-box small {
+      color: var(--text-dim);
+      font-size: 12px;
+      display: block;
+    }
+
+    .metric-large strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 20px;
+      line-height: 1.6;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .metric-box {
+      padding: 16px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .metric-box span {
+      display: block;
+      margin-top: 10px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .metric-soft {
+      margin-top: 16px;
+      padding: 18px;
+      background: linear-gradient(135deg, rgba(111,231,255,0.08), rgba(111,140,255,0.08));
+    }
+
+    .metric-soft p {
+      margin: 10px 0 0;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #d8e4f1;
+    }
+
+    section {
+      padding: 52px 0;
+    }
+
+    .section-head {
+      max-width: 860px;
+      margin-bottom: 28px;
+    }
+
+    .section-head .eyebrow {
+      display: inline-block;
+      color: #bff5ff;
+      font-size: 12px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 54px);
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+    }
+
+    .section-head p {
+      margin: 18px 0 0;
+      font-size: 17px;
+      line-height: 1.95;
+      color: var(--text-soft);
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      color: #e6edf9;
+      font-size: 14px;
+      transition: 0.25s ease;
+    }
+
+    .tag:hover {
+      border-color: var(--line-strong);
+      transform: translateY(-2px);
+    }
+
+    .statement {
+      margin-top: 24px;
+      border-radius: 28px;
+      padding: 28px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line);
+      line-height: 1.95;
+      font-size: 18px;
+      color: var(--text-soft);
+    }
+
+    .cards-3,
+    .cards-4,
+    .cards-2 {
+      display: grid;
+      gap: 18px;
+      margin-top: 32px;
+    }
+
+    .cards-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .cards-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .cards-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card {
+      border-radius: 28px;
+      padding: 22px;
+      transition: 0.28s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--line-strong);
+      box-shadow: 0 0 40px rgba(111, 231, 255, 0.12);
+    }
+
+    .card .topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .pill {
+      font-size: 12px;
+      color: #d9e7f5;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      padding: 7px 10px;
+      border-radius: 999px;
+    }
+
+    .card-index {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 0.2em;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.4;
+    }
+
+    .card p {
+      margin: 14px 0 0;
+      color: var(--text-soft);
+      line-height: 1.9;
+      font-size: 15px;
+    }
+
+    .project-detail-wrap {
+      margin-top: 24px;
+    }
+
+    .project-detail-toggle {
+      border-radius: 28px;
+      border: 1px solid var(--line);
+      background: var(--bg-card);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .project-detail-toggle summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .project-detail-toggle summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .project-detail-toggle summary strong {
+      font-size: 20px;
+    }
+
+    .project-detail-toggle summary span {
+      color: var(--text-soft);
+      line-height: 1.8;
+      font-size: 14px;
+      max-width: 760px;
+    }
+
+    .project-detail-toggle summary::after {
+      content: "展开详情";
+      color: #d9f9ff;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .project-detail-toggle[open] summary::after {
+      content: "收起详情";
+    }
+
+    .project-detail-grid {
+      display: grid;
+      gap: 16px;
+      padding: 0 24px 24px;
+    }
+
+    .project-detail-card {
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      padding: 20px;
+    }
+
+    .project-detail-card h3 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.5;
+    }
+
+    .project-detail-meta {
+      margin-top: 10px;
+      color: #c6f5ff;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .project-detail-card p {
+      margin: 12px 0 0;
+      color: var(--text-soft);
+      line-height: 1.9;
+      font-size: 15px;
+    }
+
+    .project-detail-block {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .project-detail-block strong {
+      display: block;
+      color: #dff7ff;
+      font-size: 14px;
+      margin-bottom: 8px;
+      letter-spacing: 0.04em;
+    }
+
+    .project-detail-block p {
+      margin: 0;
+    }
+
+    .result-box {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(111, 231, 255, 0.18);
+      background: rgba(111, 231, 255, 0.06);
+    }
+
+    .result-box small {
+      font-size: 12px;
+      color: #c8f7ff;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .result-box p {
+      margin-top: 10px;
+      color: #dce9f7;
+    }
+
+    .method-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(111, 231, 255, 0.1);
+      border: 1px solid rgba(111, 231, 255, 0.18);
+      color: var(--cyan);
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .adv-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .adv-icon {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(78, 255, 180, 0.1);
+      border: 1px solid rgba(78, 255, 180, 0.18);
+      color: #8effc7;
+      font-size: 16px;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 32px;
+    }
+
+    .timeline-item {
+      border-radius: 28px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--cyan), var(--blue), var(--violet));
+    }
+
+    .timeline-inner {
+      padding-left: 16px;
+    }
+
+    .timeline-item small {
+      font-size: 12px;
+      color: #c6f5ff;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+    }
+
+    .timeline-item h3 {
+      margin: 14px 0 0;
+      font-size: 28px;
+    }
+
+    .timeline-item p {
+      margin: 14px 0 0;
+      line-height: 1.95;
+      color: var(--text-soft);
+      max-width: 800px;
+    }
+
+    .insight-card {
+      border-radius: 28px;
+      padding: 26px;
+      line-height: 1.9;
+      font-size: 20px;
+      color: #e8effb;
+    }
+
+    .cta-box {
+      border-radius: 36px;
+      padding: 36px;
+      position: relative;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .cta-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(111,231,255,0.12), transparent 28%),
+        radial-gradient(circle at 80% 55%, rgba(111,140,255,0.14), transparent 28%);
+      pointer-events: none;
+    }
+
+    .cta-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+    }
+
+    .cta-box .eyebrow {
+      display: inline-block;
+      color: #bff5ff;
+      font-size: 12px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .cta-box h2 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 52px);
+      line-height: 1.2;
+      max-width: 880px;
+    }
+
+    .cta-box p {
+      margin: 18px 0 0;
+      color: var(--text-soft);
+      line-height: 1.9;
+      max-width: 760px;
+    }
+
+    .contact-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .contact-tag {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      color: #e6edf9;
+      padding: 11px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+    }
+
+    .resume-tool {
+      margin-top: 26px;
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      padding: 20px;
+    }
+
+    .resume-tool h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .resume-tool p {
+      margin: 12px 0 0;
+      color: var(--text-soft);
+      line-height: 1.85;
+      max-width: 760px;
+    }
+
+    .resume-tool textarea {
+      width: 100%;
+      margin-top: 16px;
+      min-height: 150px;
+      resize: vertical;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(5, 10, 24, 0.9);
+      color: var(--text);
+      padding: 16px;
+      font: inherit;
+      line-height: 1.8;
+      outline: none;
+    }
+
+    .resume-tool textarea:focus {
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 4px rgba(103, 232, 249, 0.08);
+    }
+
+    .resume-tool-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .resume-result {
+      display: none;
+      margin-top: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(103, 232, 249, 0.16);
+      background: rgba(103, 232, 249, 0.08);
+      padding: 16px;
+    }
+
+    .resume-result.show {
+      display: block;
+    }
+
+    .resume-result strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .resume-result p {
+      margin: 8px 0 0;
+      color: #dce9f7;
+      max-width: none;
+    }
+
+    .resume-keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .resume-keywords span {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 13px;
+      color: #eaf6ff;
+    }
+
+    .resume-message {
+      min-height: 22px;
+      margin-top: 12px;
+      font-size: 14px;
+      color: #ff9db0;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    footer {
+      padding: 28px 0 40px;
+    }
+
+    .footer-inner {
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: 0.7s ease;
+    }
+
+    .reveal.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1080px) {
+      .hero-grid,
+      .cta-grid,
+      .cards-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .cards-3 {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .cards-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .ai-workflow {
+        grid-template-columns: 1fr;
+      }
+
+      .ai-arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        width: min(var(--max), calc(100% - 24px));
+      }
+
+      .hero {
+        padding-top: 48px;
+      }
+
+      .mini-cards,
+      .cards-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-inner {
+        height: auto;
+        padding: 14px 0;
+        flex-wrap: wrap;
+      }
+
+      .nav-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .statement,
+      .cta-box,
+      .timeline-item,
+      .card,
+      .glass-card {
+        padding: 20px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="particles" id="particles"></div>
+
+  <header class="navbar">
+    <div class="container nav-inner">
+      <div class="brand">
+        <div class="brand-mark">
+          <img src="avatar-extract.jpg" alt="赵培成头像" />
+        </div>
+        <div class="brand-text">
+          <strong>赵培成</strong>
+          <span>AI 产品经理 · 面试展示页</span>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="#about">我是谁</a>
+        <a href="#ai-view">为什么面试我</a>
+        <a href="#projects">项目经历</a>
+        <a href="#method">我能做什么</a>
+        <a href="#contact">联系我</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a class="btn btn-secondary" href="#projects">查看案例</a>
+        <a class="btn btn-login" href="#contact">立即联系</a>
+        <a class="btn btn-secondary" href="login.html">登录后台</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="reveal">
+          <div class="badge">
+            <span class="badge-dot"></span>
+            <span>4 年+ B 端产品经验 · 求职方向：AI 产品经理 / 产品经理</span>
+          </div>
+
+          <h1>
+            赵培成
+            <span class="gradient-text">AI 产品经理 / B 端产品经理</span>
+          </h1>
+
+          <p>
+            我做过电网、园区、招采、OA 等复杂 B 端项目，擅长把业务流程梳理清楚，再把 AI 放进真正有价值的环节里。
+            如果你在招一个既能理解业务、又能推动系统落地、还能把 AI 用到实处的产品经理，这页就是给你快速判断我的。
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#projects">查看项目</a>
+            <a class="btn btn-secondary" href="#ai-view">为什么面试我</a>
+            <a class="btn btn-login" href="#contact">联系我</a>
+          </div>
+
+          <div class="mini-cards">
+            <div class="mini-card">
+              <div class="label">求职方向</div>
+              <div class="value">AI 产品经理 / B 端产品经理</div>
+            </div>
+            <div class="mini-card">
+              <div class="label">擅长方向</div>
+              <div class="value">复杂系统、流程中台、AI 落地</div>
+            </div>
+            <div class="mini-card">
+              <div class="label">核心结果</div>
+              <div class="value">效率提升 40%+ / 投标中标率 100%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card reveal">
+          <div class="ai-console-head">
+            <div>
+              <small>AI PRODUCT OPERATING PANEL</small>
+              <h3>我的 AI 产品工作流</h3>
+            </div>
+            <div class="signal-live">在线运行中</div>
+          </div>
+
+          <div class="ai-workflow">
+            <div class="ai-node">
+              <small>STEP 01</small>
+              <strong>识别业务瓶颈</strong>
+            </div>
+            <div class="ai-arrow">→</div>
+            <div class="ai-node">
+              <small>STEP 02</small>
+              <strong>搭建系统闭环</strong>
+            </div>
+            <div class="ai-arrow">→</div>
+            <div class="ai-node">
+              <small>STEP 03</small>
+              <strong>接入 AI 提效</strong>
+            </div>
+          </div>
+
+          <div class="ai-log">
+            <small>MODEL OUTPUT</small>
+            <ul>
+              <li>我做 AI 产品，不是先接模型，而是先找出最值得提效的环节。</li>
+              <li>我擅长把复杂业务做成可执行系统，再把 AI 放进审核、提取、匹配、自动化这些关键节点。</li>
+              <li>我判断 AI 是否有价值，看的不是概念，而是准确率、时长、成本和用户反馈。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow">我是谁</div>
+          <h2>如果你是 HR，可以这样快速理解我</h2>
+          <p>
+            我不是只会写文档的产品经理，我的核心优势是能在复杂业务里把事情梳理清楚、推动上线，并做出可以量化的结果。
+          </p>
+        </div>
+
+        <div class="tag-list reveal">
+          <div class="tag">4 年+ B 端产品经验</div>
+          <div class="tag">30+ 项目统筹经历</div>
+          <div class="tag">AI 实战落地项目</div>
+          <div class="tag">复杂系统与跨系统集成</div>
+          <div class="tag">能设计，也能推进落地</div>
+        </div>
+
+        <div class="statement reveal">
+          我长期做政企 B 端产品，项目经历集中在电网、园区、招采、OA 等场景。我的价值不在于“会不会说 AI”，而在于能把复杂流程做成系统，把 AI 放到真正能提效、降本、控质量的地方。
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow">项目经历</div>
+          <h2>先看精选项目，再按需展开完整经历</h2>
+          <p>
+            为了方便快速浏览，我先放 3 个最能代表我的项目。下面也保留了完整项目经历，想详细了解时可以继续展开看。
+          </p>
+        </div>
+
+        <div class="cards-3">
+          <div class="card reveal">
+            <div class="topline">
+              <div class="pill">电网运维 / 0-1 系统搭建</div>
+              <div class="card-index">01</div>
+            </div>
+            <h3>多层级闭环流程中台</h3>
+            <p>
+              主导 0-1 搭建小区运维系统，设计“台账录入-工单生成-移动回单-Web 审核-归档打回”完整闭环，并接入 PMS 与 AI 审核模块，解决多角色协同和高频工单流转问题。
+            </p>
+            <div class="result-box">
+              <small>结果</small>
+              <p>支撑 3958 条台账、处理 2.3 万份附件与 5.5 万张巡检图，审核效率提升 3 倍，人工复核减少 60%，工单合格率提升至 92.4%。</p>
+            </div>
+          </div>
+
+          <div class="card reveal">
+            <div class="topline">
+              <div class="pill">AI 数据提取 / 流程自动化</div>
+              <div class="card-index">02</div>
+            </div>
+            <h3>招采运营系统 AI 智能提取</h3>
+            <p>
+              参与建筑招标公告处理系统优化，推动 AI 从正文和附件中自动提取时间字段，并配合标签、过滤、工作流改造，让原本大量依赖人工的处理流程转向自动化。
+            </p>
+            <div class="result-box">
+              <small>结果</small>
+              <p>AI 自动提取准确率达到 90%+，显著降低人工处理成本，并让数据能进一步支撑市场分析、投标策略与合作机会挖掘。</p>
+            </div>
+          </div>
+
+          <div class="card reveal">
+            <div class="topline">
+              <div class="pill">个人实践 / AI 原生产品</div>
+              <div class="card-index">03</div>
+            </div>
+            <h3>自动投简历 AI 工具 APP</h3>
+            <p>
+              围绕求职效率痛点，我独立借助 AI 完成需求梳理、功能设计、开发实现和测试优化，打通“平台唤起-岗位抓取-简历匹配-打招呼语生成”全链路。
+            </p>
+            <div class="result-box">
+              <small>结果</small>
+              <p>完成 MVP 并实测将单岗位投递耗时从 5 分钟缩短到 30 秒，这说明我不只会讲 AI，也能自己把 AI 产品做出来。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-detail-wrap reveal">
+          <details class="project-detail-toggle">
+            <summary>
+              <div>
+                <strong>展开查看完整项目经历</strong>
+                <span>首页先展示精选项目，点开后可继续查看我在电网、园区、OA、数字孪生、AI 工具等方向的完整项目沉淀。</span>
+              </div>
+            </summary>
+
+            <div class="project-detail-grid">
+              <div class="project-detail-card">
+                <h3>卓越服务供电指挥平台 · 小区运维系统</h3>
+                <div class="project-detail-meta">产品负责人 / 2024.04 - 2025.09</div>
+                <div class="project-detail-block">
+                  <strong>项目背景</strong>
+                  <p>原电力系统更多是围绕单一设备开展巡视，缺乏“小区”维度的设备统筹管理模式，导致运维协同弱、设备管控分散、人工巡检效率低，也难以形成标准化审核闭环。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>我的职责</strong>
+                  <p>我主导系统从 0 到 1 搭建，设计“基础数据录入 - 工单智能生成 - 移动端回单 - Web 端审核 - 归档/打回”的完整流程；同时打通 PMS 接口获取组织机构信息，制定工单生成规则，并推动 AI 审核模块落地，定义图片/附件合格标准、样本数据和人工纠错回流机制。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>项目结果</strong>
+                  <p>系统支撑 3958 条台账，AI 处理 2.3 万份附件和 5.5 万张巡检图，拦截不合格图片 4200 张；审核效率提升 3 倍，人工复核减少 60%，运维整体效率提升 40%，工单回单合格率从 85% 提升至 92.4%。</p>
+                </div>
+              </div>
+
+              <div class="project-detail-card">
+                <h3>卓越服务供电指挥平台 · 缺陷隐患管理系统</h3>
+                <div class="project-detail-meta">产品负责人 / 2024.06 - 2025.09</div>
+                <div class="project-detail-block">
+                  <strong>项目背景</strong>
+                  <p>原系统缺乏与电力 PMS 的稳定同步机制，接口文档老旧、报错失真、设备数据转换常出错，导致缺陷隐患信息流转慢、录入效率低，影响业务连续性。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>我的职责</strong>
+                  <p>我梳理了缺陷隐患数据与 PMS 字段映射关系，制定数据转换和异常处理方案；组织研发团队赴现场联调，解决接口实现和文档不一致的问题，并设计级联弹窗和批量导入功能，适配高频录入场景。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>项目结果</strong>
+                  <p>最终把数据同步成功率从 70% 提升到 95%，批量导入效率提升 80%，并沉淀出 15+ 套标准化接口方案和数据映射规则，保障核心业务数据稳定流转。</p>
+                </div>
+              </div>
+
+              <div class="project-detail-card">
+                <h3>挂图作战三维可视化平台</h3>
+                <div class="project-detail-meta">核心设计者 / 2025.05 - 2025.09</div>
+                <div class="project-detail-block">
+                  <strong>项目背景</strong>
+                  <p>四川电网在复杂工程建设和日常运维中需要更强的可视化管控能力，希望通过地图、三维场景和统一看板，把关键节点、任务轨迹和异常状态更直观地呈现出来。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>我的职责</strong>
+                  <p>我负责低电压、频繁停电等核心数据接入与地图可视化方案设计，规划统一数据看板，推动平台样式重构和功能优化，并通过分片加载、按需渲染等方式优化前端性能。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>项目结果</strong>
+                  <p>完成电网关键数据的地图可视化方案和统一数据看板落地设计，跨系统数据整合和性能优化方案同步推进。虽然因公司解散项目未最终上线，但沉淀了可复用的三维可视化和多系统数据融合方案。</p>
+                </div>
+              </div>
+
+              <div class="project-detail-card">
+                <h3>安全工器具智能管控平台</h3>
+                <div class="project-detail-meta">产品负责人 / 2024.10 - 2025.09</div>
+                <div class="project-detail-block">
+                  <strong>项目背景</strong>
+                  <p>原工器具管理严重依赖纸质记录，各环节缺乏信息化支撑，存在数据分散难追溯、人工操作效率低、监管不实时等问题，难以满足安监数字化要求。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>我的职责</strong>
+                  <p>我实地调研各部门流程和使用需求，梳理新增台账、入库、第三方检测、报告出具、出库的完整流程，并推动移动端扫码、批量报告导入、逾期提醒等能力上线，协调现场部署和测试。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>项目结果</strong>
+                  <p>实现工器具全流程线上化管理，批量报告导入准确率 100%，录入时间节省 70%；扫码后单件入库/出库处理时间从 1 分钟降到 1 秒，减少人工跟踪成本 60%，基层每周减少 12 小时工作量。</p>
+                </div>
+              </div>
+
+              <div class="project-detail-card">
+                <h3>招采运营系统 · AI 智能数据提取</h3>
+                <div class="project-detail-meta">核心设计者 / 2025.10 - 2026.01</div>
+                <div class="project-detail-block">
+                  <strong>项目背景</strong>
+                  <p>原有招标公告数据处理高度依赖人工，耗时耗力，且信息录入准确率和分类效率不稳定，人工成本较高，难以支撑更高频的数据处理和后续业务分析。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>我的职责</strong>
+                  <p>我参与定义 AI 在公告正文与附件中的时间字段提取方案，并配合字段新增、工作流改造、过滤规则优化和重复公告误判修复，推动数据加工从人工处理转向自动化。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>项目结果</strong>
+                  <p>AI 自动提取时间字段准确率达到 90%+，显著提升公告数据采集和处理效率，降低人工操作负担，同时让优化后的数据体系能够服务市场分析、投标策略和业务机会挖掘。</p>
+                </div>
+              </div>
+
+              <div class="project-detail-card">
+                <h3>园区数字孪生三维可视化服务平台</h3>
+                <div class="project-detail-meta">核心设计者 / 2023.03 - 2024.03</div>
+                <div class="project-detail-block">
+                  <strong>项目背景</strong>
+                  <p>园区各科室数据割裂，经济运行数据缺乏统一归集和可视化支撑，难以满足运营、招商和决策场景对实时数据和直观呈现的需求。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>我的职责</strong>
+                  <p>我梳理园区工业经济运行数据架构，完成多年产业与经济数据汇总，采集企业基础数据，建立数字化图谱，并把共性需求提炼成标准化方案，支撑政府端应用场景设计。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>项目结果</strong>
+                  <p>采集 2000+ 家企业数据，建立 300+ 家规上企业数字化图谱，形成园区数字化底座，帮助项目成为国家工信部工业互联网试点示范项目和省级近零碳试点项目。</p>
+                </div>
+              </div>
+
+              <div class="project-detail-card">
+                <h3>众鹤云智园区商户管理平台</h3>
+                <div class="project-detail-meta">核心设计者 / 2022.11 - 2024.03</div>
+                <div class="project-detail-block">
+                  <strong>项目背景</strong>
+                  <p>园区在商户、设备和运营数据管理上存在信息分散、管理链路不清晰的问题，缺少更统一的数字化管理平台来支撑服务质量与运营效率提升。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>我的职责</strong>
+                  <p>我负责拆解园区管控系统核心逻辑和功能模块，对接终端客户梳理使用痛点，建立需求池，规范 Web/H5 前端样式，并设计运营可视化页面，让产品更贴合实际使用场景。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>项目结果</strong>
+                  <p>完成 5 家园区/学校商户需求优化，改善系统功能 10+ 处，新增 5 个核心功能，统一了前端操作风格，显著提升商户数据转化能力和园区整体管理效率。</p>
+                </div>
+              </div>
+
+              <div class="project-detail-card">
+                <h3>天府公交无纸化办公 OA 系统</h3>
+                <div class="project-detail-meta">产品负责人 / 2023.01 - 2023.09</div>
+                <div class="project-detail-block">
+                  <strong>项目背景</strong>
+                  <p>公交公司原有办公方式高度依赖纸质文件流转，存在部门数据割裂、沟通成本高、协作效率低和资源浪费严重的问题。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>我的职责</strong>
+                  <p>我调研企业内部协作痛点，明确 OA 系统核心需求，制定开发计划并把控项目周期，同时设计跨部门数据可视化图表，为管理层提供更直观的决策支持，并负责全员培训和反馈机制建设。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>项目结果</strong>
+                  <p>系统成功打通 15 个部门数据链路，实现流程与数据高效共享，基本替代纸质办公，整体运营效率提升 80%，明显提升协作透明度、数据可见性和管理决策效率。</p>
+                </div>
+              </div>
+
+              <div class="project-detail-card">
+                <h3>自动投简历 AI 工具 APP</h3>
+                <div class="project-detail-meta">独立设计与开发 / 2026.03</div>
+                <div class="project-detail-block">
+                  <strong>项目背景</strong>
+                  <p>基于我自己真实的求职场景，发现简历投递效率低、岗位匹配不精准、打招呼语定制化耗时，说明招聘投递流程本身存在明显可被 AI 改造的空间。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>我的职责</strong>
+                  <p>我独立借助 AI 完成需求梳理、功能设计、开发实现与测试优化，打通主流求职 APP 唤起、JD 抓取、岗位-简历匹配计算和高匹配岗位打招呼语自动生成等核心流程。</p>
+                </div>
+                <div class="project-detail-block">
+                  <strong>项目结果</strong>
+                  <p>完成 APP MVP 并实测跑通全链路，把单岗位投递时间从 5 分钟缩短到 30 秒，也让我沉淀了 AI 工具辅助设计开发、AI 在垂直场景落地和 AI 原生产品思考的完整经验。</p>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="ai-view">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow">为什么面试我</div>
+          <h2>如果你在招产品经理，我觉得我有 3 个比较明确的价值</h2>
+          <p>
+            这 3 点不是概念表达，而是我过去项目里已经验证过的能力。
+          </p>
+        </div>
+
+        <div class="cards-3">
+          <div class="card reveal">
+            <h3>能做复杂 B 端项目</h3>
+            <p>我做过电网、园区、招采、OA 等复杂业务，不会只停留在页面和交互层。</p>
+          </div>
+
+          <div class="card reveal">
+            <h3>能把 AI 用到业务里</h3>
+            <p>我不是把 AI 当卖点，而是把它放进审核、提取、匹配、自动化这些真正能出结果的环节。</p>
+          </div>
+
+          <div class="card reveal">
+            <h3>能把项目推到落地</h3>
+            <p>我可以从需求梳理、方案设计，一直推进到上线、培训和后续优化，而不是只交付 PRD。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="method">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow">我能做什么</div>
+          <h2>如果我加入团队，通常能承担这 4 类事情</h2>
+          <p>
+            这也是我比较适合 B 端、SaaS 和 AI 产品岗位的原因。
+          </p>
+        </div>
+
+        <div class="cards-4">
+          <div class="card reveal">
+            <div class="method-icon">01</div>
+            <h3>梳理复杂业务</h3>
+            <p>把复杂流程拆清楚，明确角色、节点、规则和异常情况。</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="method-icon">02</div>
+            <h3>设计系统方案</h3>
+            <p>把业务问题做成可执行的产品方案、原型和功能结构。</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="method-icon">03</div>
+            <h3>推动项目上线</h3>
+            <p>协调研发、测试、客户和内部团队，把项目从方案推进到真正交付。</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="method-icon">04</div>
+            <h3>做 AI 落地优化</h3>
+            <p>把 AI 放进合适场景，并用准确率、时长和成本来验证它有没有价值。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container">
+        <div class="cta-box reveal">
+          <div class="cta-grid">
+            <div>
+              <div class="eyebrow">联系我</div>
+              <h2>如果你需要的是一个能把 AI 真正做进业务系统、并对结果负责的产品经理，我们可以聊聊。</h2>
+              <p>
+                我希望加入重视产品判断、业务理解和 AI 落地能力的团队，尤其适合政企 B 端、SaaS、智能化升级和流程自动化方向。
+              </p>
+
+              <div class="contact-tags">
+                <div class="contact-tag">13219030861</div>
+                <div class="contact-tag">Jung120155623@Outlook.com</div>
+                <div class="contact-tag">求职方向：AI 产品经理 / 产品经理</div>
+              </div>
+
+              <div class="resume-tool">
+                <h3>请输入岗位 JD，以获取简历信息</h3>
+                <p>请粘贴岗位描述，系统会自动匹配并返回最相关的一份简历供查看和下载。</p>
+                <textarea id="jdText" placeholder="请粘贴岗位 JD，例如：负责 AI 产品规划、B 端平台建设、工作流设计、数据治理等..."></textarea>
+                <div class="resume-tool-actions">
+                  <button class="btn btn-primary" id="matchResumeBtn" type="button">匹配并获取简历</button>
+                  <button class="btn btn-secondary" id="clearJdBtn" type="button">清空 JD</button>
+                </div>
+                <div class="resume-message" id="resumeMessage"></div>
+                <div class="resume-result" id="resumeResult">
+                  <strong id="resumeLabel"></strong>
+                  <p id="resumeFit"></p>
+                  <div class="resume-keywords" id="resumeKeywords"></div>
+                  <div class="resume-tool-actions">
+                    <a class="btn btn-login" id="resumeDownloadLink" href="#" target="_blank" rel="noopener noreferrer">下载匹配简历</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cta-actions">
+              <a class="btn btn-primary" href="mailto:Jung120155623@Outlook.com">发邮件联系</a>
+              <a class="btn btn-login" id="login" href="tel:13219030861">电话联系</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>© 2026 赵培成 · 面向面试官的个人展示页</div>
+      <div>业务理解 · 系统设计 · AI 落地</div>
+    </div>
+  </footer>
+
+  <script>
+    const API_BASE_URL = window.location.protocol === "file:" ? "http://127.0.0.1:5000" : "";
+    const particleWrap = document.getElementById("particles");
+    for (let i = 0; i < 28; i++) {
+      const p = document.createElement("span");
+      p.className = "particle";
+      p.style.left = Math.random() * 100 + "%";
+      p.style.top = Math.random() * 100 + "%";
+      p.style.animationDuration = (4 + Math.random() * 6) + "s";
+      p.style.animationDelay = (Math.random() * 4) + "s";
+      p.style.opacity = Math.random() * 0.6 + 0.15;
+      particleWrap.appendChild(p);
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+        }
+      });
+    }, {
+      threshold: 0.12
+    });
+
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+
+    const jdText = document.getElementById("jdText");
+    const matchResumeBtn = document.getElementById("matchResumeBtn");
+    const clearJdBtn = document.getElementById("clearJdBtn");
+    const resumeMessage = document.getElementById("resumeMessage");
+    const resumeResult = document.getElementById("resumeResult");
+    const resumeLabel = document.getElementById("resumeLabel");
+    const resumeFit = document.getElementById("resumeFit");
+    const resumeKeywords = document.getElementById("resumeKeywords");
+    const resumeDownloadLink = document.getElementById("resumeDownloadLink");
+
+    clearJdBtn?.addEventListener("click", () => {
+      jdText.value = "";
+      resumeMessage.textContent = "";
+      resumeResult.classList.remove("show");
+    });
+
+    matchResumeBtn?.addEventListener("click", async () => {
+      const content = jdText.value.trim();
+      resumeMessage.textContent = "";
+      resumeResult.classList.remove("show");
+
+      if (content.length < 20) {
+        resumeMessage.textContent = "请至少粘贴一段较完整的岗位 JD。";
+        return;
+      }
+
+      try {
+        const response = await fetch(API_BASE_URL + "/api/resume/match", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            jdText: content
+          })
+        });
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          resumeMessage.textContent = result.message || "匹配失败，请稍后再试。";
+          return;
+        }
+
+        resumeLabel.textContent = result.match.label;
+        resumeFit.textContent = result.match.fitFor;
+        resumeKeywords.innerHTML = "";
+        (result.match.matchedKeywords || []).forEach((keyword) => {
+          const tag = document.createElement("span");
+          tag.textContent = keyword;
+          resumeKeywords.appendChild(tag);
+        });
+        if (!result.match.matchedKeywords || result.match.matchedKeywords.length === 0) {
+          const tag = document.createElement("span");
+          tag.textContent = "未命中特定关键词，已返回默认通用版本";
+          resumeKeywords.appendChild(tag);
+        }
+        resumeDownloadLink.href = API_BASE_URL + result.downloadUrl;
+        resumeResult.classList.add("show");
+      } catch (error) {
+        resumeMessage.textContent = "无法连接后端服务，请稍后重试。";
+      }
+    });
+  </script>
+</body>
+</html>

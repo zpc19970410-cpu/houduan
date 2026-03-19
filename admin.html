@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>后台管理｜赵培成个人站</title>
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --paper: #ffffff;
+      --paper-soft: #f7f9fc;
+      --ink: #0f172a;
+      --muted: #667085;
+      --line: #e4e7ec;
+      --line-strong: #d0d5dd;
+      --sidebar: #121826;
+      --sidebar-soft: #1b2335;
+      --sidebar-text: #d7deea;
+      --sidebar-dim: #8f9ab0;
+      --blue: #2563eb;
+      --blue-soft: #eff4ff;
+      --green: #12b76a;
+      --amber: #f79009;
+      --red: #f04438;
+      --shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.08), transparent 20%),
+        linear-gradient(180deg, #f8fafc, var(--bg));
+      overflow: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .layout {
+      height: 100vh;
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+        var(--sidebar);
+      color: var(--sidebar-text);
+      padding: 22px 18px;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      overflow-y: auto;
+    }
+
+    .brand {
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .brand small {
+      color: var(--sidebar-dim);
+      letter-spacing: 0.14em;
+      font-size: 11px;
+    }
+
+    .brand h1 {
+      margin: 10px 0 8px;
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .brand p {
+      margin: 0;
+      color: #a9b4c7;
+      line-height: 1.75;
+      font-size: 13px;
+    }
+
+    .nav-group {
+      padding: 14px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav-title {
+      margin: 0 0 10px;
+      padding: 0 8px;
+      color: var(--sidebar-dim);
+      letter-spacing: 0.12em;
+      font-size: 11px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      color: var(--sidebar-text);
+      transition: 0.18s ease;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .nav-link:last-child {
+      margin-bottom: 0;
+    }
+
+    .nav-link span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      color: #f8fbff;
+      font-size: 12px;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: linear-gradient(90deg, rgba(37,99,235,0.22), rgba(37,99,235,0.06));
+    }
+
+    .side-meta {
+      margin-top: auto;
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .side-meta h3 {
+      margin: 0 0 10px;
+      font-size: 15px;
+    }
+
+    .side-meta p {
+      margin: 0;
+      color: #a8b1c3;
+      line-height: 1.7;
+      font-size: 13px;
+    }
+
+    .content {
+      padding: 24px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .headline small {
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      font-size: 11px;
+    }
+
+    .headline h2 {
+      margin: 8px 0 10px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.08;
+    }
+
+    .headline p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 760px;
+      font-size: 15px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      height: 42px;
+      border-radius: 999px;
+      padding: 0 16px;
+      border: 1px solid var(--line-strong);
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+    }
+
+    .btn-primary {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: #fff;
+    }
+
+    .hero-grid,
+    .cards-3,
+    .cards-2 {
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero-grid {
+      grid-template-columns: 1.4fr 1fr;
+      margin-bottom: 18px;
+    }
+
+    .cards-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 18px;
+    }
+
+    .cards-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 18px;
+    }
+
+    .panel,
+    .metric,
+    .table-card,
+    .timeline-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 24px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .panel-header h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .panel-header small,
+    .metric small,
+    .table-card small {
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      font-size: 11px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .metric {
+      padding: 20px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    .metric p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .big-number {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .big-number strong {
+      font-size: 56px;
+      line-height: 0.95;
+    }
+
+    .big-number span {
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--paper-soft);
+      border: 1px solid var(--line);
+    }
+
+    .summary-item strong {
+      font-size: 14px;
+    }
+
+    .summary-item span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .section-head {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .section-head h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .section-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .project-card {
+      padding: 22px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .project-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .project-top h4 {
+      margin: 0;
+      font-size: 19px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .tag.blue {
+      background: #eff4ff;
+      color: #175cd3;
+    }
+
+    .tag.green {
+      background: #ecfdf3;
+      color: #067647;
+    }
+
+    .tag.amber {
+      background: #fffaeb;
+      color: #b54708;
+    }
+
+    .project-card p,
+    .timeline-card p,
+    .table-card p,
+    .table-card li {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .progress {
+      margin-top: 14px;
+      height: 10px;
+      border-radius: 999px;
+      background: #edf1f7;
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #175cd3, #53b1fd);
+    }
+
+    .project-meta {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .table-card {
+      padding: 22px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+
+    .data-table th,
+    .data-table td {
+      text-align: left;
+      padding: 14px 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    .data-table th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .timeline-card {
+      padding: 22px;
+    }
+
+    .timeline-list {
+      margin-top: 12px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 18px;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--blue);
+      box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.1);
+    }
+
+    .timeline-item strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-chip.green {
+      background: #ecfdf3;
+      color: #067647;
+    }
+
+    .status-chip.amber {
+      background: #fffaeb;
+      color: #b54708;
+    }
+
+    .status-chip.red {
+      background: #fef3f2;
+      color: #b42318;
+    }
+
+    @media (max-width: 1200px) {
+      .hero-grid,
+      .cards-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .cards-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        padding-bottom: 14px;
+      }
+
+      .content {
+        padding-top: 18px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .content,
+      .sidebar {
+        padding: 16px;
+      }
+
+      .topbar,
+      .section-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .data-table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <small>ADMIN CONSOLE</small>
+        <h1>赵培成<br />后台系统</h1>
+        <p>更像真实产品后台的控制台布局，用于展示管理视图、信息层级和后台交互气质。</p>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-title">导航</div>
+        <a class="nav-link active" href="#overview"><span>01</span>总览驾驶舱</a>
+        <a class="nav-link" href="#projects"><span>02</span>项目管理</a>
+        <a class="nav-link" href="#ai"><span>03</span>AI 能力台</a>
+        <a class="nav-link" href="#delivery"><span>04</span>交付表现</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-title">快捷入口</div>
+        <a class="nav-link" href="./index.html"><span>↗</span>返回前台首页</a>
+        <a class="nav-link" href="#overview"><span>⌘</span>刷新总览视图</a>
+      </div>
+
+      <div class="side-meta">
+        <h3>登录信息</h3>
+        <p id="loginMeta">正在读取登录状态...</p>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div class="topbar" id="overview">
+        <div class="headline">
+          <small>BACKSTAGE OVERVIEW</small>
+          <h2>后台管理总览</h2>
+          <p>这里不再是前台展示型页面，而是更偏内部控制台的工作区风格。左侧负责导航，右侧负责信息汇总、项目状态和关键面板呈现。</p>
+        </div>
+
+        <div class="actions">
+          <a class="btn" href="./index.html">查看前台</a>
+          <button class="btn btn-primary" id="logoutBtn" type="button">退出登录</button>
+        </div>
+      </div>
+
+      <section class="hero-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <small>本周概览</small>
+              <h3>产品与项目驾驶舱</h3>
+            </div>
+            <div class="badge">运行稳定</div>
+          </div>
+
+          <div class="big-number">
+            <div>
+              <small>核心项目总数</small>
+              <strong>30+</strong>
+            </div>
+            <span>覆盖 0-1、AI、B 端交付</span>
+          </div>
+
+          <div class="summary-list">
+            <div class="summary-item">
+              <strong>复杂系统设计</strong>
+              <span>流程中台、跨系统集成、权限与协作闭环</span>
+            </div>
+            <div class="summary-item">
+              <strong>AI 产品落地</strong>
+              <span>图像审核、字段提取、匹配生成、流程自动化</span>
+            </div>
+            <div class="summary-item">
+              <strong>项目推进能力</strong>
+              <span>需求梳理、评审推动、上线培训、交付复盘</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="metric">
+            <small>AI 实战项目</small>
+            <strong>2+</strong>
+            <p>包含 AI 审核与 AI 数据提取等真实业务场景。</p>
+          </div>
+          <div class="metric">
+            <small>效率提升</small>
+            <strong>40%+</strong>
+            <p>以流程优化和 AI 自动化为核心的量化结果。</p>
+          </div>
+          <div class="metric">
+            <small>投标中标率</small>
+            <strong>100%</strong>
+            <p>具备方案表达和交付确定性。</p>
+          </div>
+          <div class="metric">
+            <small>用户满意度</small>
+            <strong>92%</strong>
+            <p>重点项目中形成明确正反馈。</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-head" id="projects">
+        <div>
+          <h3>项目管理</h3>
+          <p>更像后台中的项目列表和状态看板，而不是前台风格的展示卡片。</p>
+        </div>
+        <div class="badge">3 个代表项目</div>
+      </div>
+
+      <section class="cards-3">
+        <article class="project-card">
+          <div class="project-top">
+            <h4>多层级闭环流程中台</h4>
+            <div class="tag blue">进行中</div>
+          </div>
+          <p>0-1 搭建小区运维系统，打通台账录入、工单生成、移动回单、Web 审核与归档闭环。</p>
+          <div class="progress"><span style="width: 92%"></span></div>
+          <div class="project-meta">
+            <span>工单合格率 92.4%</span>
+            <span>审核效率提升 3 倍</span>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-top">
+            <h4>招采运营系统 AI 提取</h4>
+            <div class="tag green">已上线</div>
+          </div>
+          <p>通过正文与附件字段自动提取，减少人工处理负担，提升数据分类和业务决策效率。</p>
+          <div class="progress"><span style="width: 90%"></span></div>
+          <div class="project-meta">
+            <span>准确率 90%+</span>
+            <span>数据处理自动化</span>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-top">
+            <h4>自动投简历 AI 工具</h4>
+            <div class="tag amber">MVP</div>
+          </div>
+          <p>围绕求职投递效率，打通岗位抓取、简历匹配与话术生成的 AI 原生流程。</p>
+          <div class="progress"><span style="width: 83%"></span></div>
+          <div class="project-meta">
+            <span>单岗位 30 秒</span>
+            <span>独立完成设计开发</span>
+          </div>
+        </article>
+      </section>
+
+      <div class="section-head" id="ai">
+        <div>
+          <h3>AI 能力台</h3>
+          <p>后台语境下呈现为能力模块、策略原则和执行结果，而不是前台宣传文案。</p>
+        </div>
+        <div class="badge">能力管理</div>
+      </div>
+
+      <section class="cards-2">
+        <div class="table-card">
+          <small>能力模块列表</small>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>模块</th>
+                <th>应用节点</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>AI 图像 / 附件审核</td>
+                <td>巡检图、附件合规校验</td>
+                <td><span class="status-chip green">稳定运行</span></td>
+              </tr>
+              <tr>
+                <td>AI 数据提取</td>
+                <td>正文 / 附件字段抽取回填</td>
+                <td><span class="status-chip green">已落地</span></td>
+              </tr>
+              <tr>
+                <td>AI 匹配与生成</td>
+                <td>岗位匹配、话术生成</td>
+                <td><span class="status-chip amber">持续迭代</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="timeline-card">
+          <small>AI 落地原则</small>
+          <div class="timeline-list">
+            <div class="timeline-item">
+              <strong>优先做高频、重复、规则明确的节点</strong>
+              <p>先找最值得自动化的环节，而不是先接模型再找场景。</p>
+            </div>
+            <div class="timeline-item">
+              <strong>保留人工兜底与纠错入口</strong>
+              <p>用人工终审、数据回流和异常处理保证系统可控。</p>
+            </div>
+            <div class="timeline-item">
+              <strong>用指标判断是否真的有价值</strong>
+              <p>看准确率、处理时长、替代率和满意度，而不是看概念是否新。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-head" id="delivery">
+        <div>
+          <h3>交付表现</h3>
+          <p>这一块更像后台中的复盘和交付状态，而不是前台的个人宣言。</p>
+        </div>
+        <div class="badge">交付视图</div>
+      </div>
+
+      <section class="cards-2">
+        <div class="table-card">
+          <small>交付维度</small>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>维度</th>
+                <th>表现</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>需求定义</td>
+                <td>擅长在复杂业务中抽象主链路</td>
+                <td><span class="status-chip green">强项</span></td>
+              </tr>
+              <tr>
+                <td>项目推进</td>
+                <td>能跨研发、测试、客户多方推进</td>
+                <td><span class="status-chip green">强项</span></td>
+              </tr>
+              <tr>
+                <td>AI 落地</td>
+                <td>能把模型能力接入真实流程</td>
+                <td><span class="status-chip green">强项</span></td>
+              </tr>
+              <tr>
+                <td>数据治理</td>
+                <td>具备跨系统映射与清洗思维</td>
+                <td><span class="status-chip amber">持续扩展</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-card">
+          <small>岗位适配</small>
+          <p>适合 AI 产品经理、B 端产品经理、SaaS 产品经理，以及需要同时理解业务、系统和 AI 落地的团队。</p>
+          <ul>
+            <li>擅长复杂流程中台、跨系统数据链路与管理后台设计。</li>
+            <li>有技术背景，和研发协同效率高，能兼顾业务与可实现性。</li>
+            <li>具备面向结果的表达方式，适合偏交付、偏增长、偏智能化升级场景。</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const API_BASE_URL = window.location.protocol === "file:" ? "http://127.0.0.1:5000" : "";
+    const PAGE_BASE_URL = window.location.protocol === "file:" ? "http://127.0.0.1:5000" : window.location.origin;
+    const loginMeta = document.getElementById("loginMeta");
+
+    async function bootstrap() {
+      try {
+        const response = await fetch(API_BASE_URL + "/api/me", {
+          credentials: "same-origin"
+        });
+
+        if (!response.ok) {
+          window.location.replace(PAGE_BASE_URL + "/login.html");
+          return;
+        }
+
+        const result = await response.json();
+        loginMeta.textContent = "当前账号：" + result.user.username + "，姓名：" + result.user.name + "。";
+      } catch (error) {
+        loginMeta.textContent = "无法读取登录状态，请确认后端服务已启动。";
+      }
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      try {
+        await fetch(API_BASE_URL + "/api/logout", {
+          method: "POST",
+          credentials: "same-origin"
+        });
+      } finally {
+        window.location.href = PAGE_BASE_URL + "/login.html";
+      }
+    });
+
+    bootstrap();
+  </script>
+</body>
+</html>

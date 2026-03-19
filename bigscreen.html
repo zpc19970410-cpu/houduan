@@ -41,6 +41,27 @@
       pointer-events: none;
     }
 
+    .floating-back {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 5;
+      height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text);
+      background: rgba(7, 18, 38, 0.92);
+      border: 1px solid rgba(103, 232, 249, 0.24);
+      box-shadow: 0 16px 36px rgba(2, 6, 23, 0.35);
+      backdrop-filter: blur(14px);
+      font-size: 14px;
+    }
+
     .screen {
       position: relative;
       z-index: 1;
@@ -172,6 +193,7 @@
     #chinaMap {
       min-height: 0;
       height: 100%;
+      margin-top: 6px;
     }
 
     .metric-grid {
@@ -257,6 +279,18 @@
       display: grid;
       gap: 12px;
       margin-top: 14px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .status-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .status-list::-webkit-scrollbar-thumb {
+      background: rgba(103, 232, 249, 0.18);
+      border-radius: 999px;
     }
 
     .status-row {
@@ -333,6 +367,7 @@
 </head>
 <body>
   <div class="grid-bg"></div>
+  <a class="floating-back" href="./admin">← 返回后台</a>
   <div class="screen">
     <aside class="side">
       <section class="card">
@@ -584,10 +619,27 @@
     }
 
     function renderMap2D(items) {
+      const valueMap = Object.fromEntries(items.map((item) => [item.name, item.value]));
       mapChart.setOption({
         tooltip: {
           trigger: "item",
-          formatter: (params) => `${params.name}<br/>热度：${params.value || 0}`
+          triggerOn: "mousemove",
+          alwaysShowContent: false,
+          enterable: false,
+          backgroundColor: "rgba(6, 17, 35, 0.96)",
+          borderColor: "rgba(103, 232, 249, 0.28)",
+          borderWidth: 1,
+          textStyle: {
+            color: "#eef6ff",
+            fontSize: 13
+          },
+          extraCssText: "box-shadow:0 18px 40px rgba(2,6,23,.45); border-radius:14px; padding:10px 12px;",
+          formatter: (params) => {
+            const value = Array.isArray(params.value)
+              ? (valueMap[params.name] || params.value[2] || 0)
+              : (params.value || valueMap[params.name] || 0);
+            return `${params.name}<br/>安装人数：${value} 人`;
+          }
         },
         visualMap: {
           type: "piecewise",
@@ -607,7 +659,9 @@
         geo: {
           map: "china-bigscreen",
           roam: true,
-          zoom: 1.12,
+          zoom: 1.18,
+          layoutCenter: ["50%", "55%"],
+          layoutSize: "108%",
           itemStyle: {
             areaColor: "#173b73",
             borderColor: "#7dd3fc",
@@ -650,12 +704,26 @@
     }
 
     function renderMap3D(items) {
+      const valueMap = Object.fromEntries(items.map((item) => [item.name, item.value]));
       mapChart.setOption({
         tooltip: {
           trigger: "item",
+          triggerOn: "mousemove",
+          alwaysShowContent: false,
+          enterable: false,
+          backgroundColor: "rgba(6, 17, 35, 0.96)",
+          borderColor: "rgba(103, 232, 249, 0.28)",
+          borderWidth: 1,
+          textStyle: {
+            color: "#eef6ff",
+            fontSize: 13
+          },
+          extraCssText: "box-shadow:0 18px 40px rgba(2,6,23,.45); border-radius:14px; padding:10px 12px;",
           formatter: (params) => {
-            const value = Array.isArray(params.value) ? params.value[2] : params.value;
-            return `${params.name}<br/>热度：${value || 0}`;
+            const value = Array.isArray(params.value)
+              ? (valueMap[params.name] || params.value[2] || 0)
+              : (params.value || valueMap[params.name] || 0);
+            return `${params.name}<br/>安装人数：${value} 人`;
           }
         },
         visualMap: {
@@ -699,9 +767,9 @@
             }
           },
           viewControl: {
-            distance: 88,
-            alpha: 52,
-            beta: -6,
+            distance: 96,
+            alpha: 48,
+            beta: -4,
             minDistance: 70,
             maxDistance: 140
           },
